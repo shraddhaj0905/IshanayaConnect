@@ -1,8 +1,10 @@
 
+
+// module.exports = mongoose.model("ApprovedStudent", approvedStudentSchema);
 // const mongoose = require("mongoose");
 
 // const approvedStudentSchema = new mongoose.Schema({
-//     student_id: { type: String, unique: true, required: true }, // ✅ Unique Student ID
+//     student_id: { type: String, unique: true, required: true },
 //     parent_email: { type: String, required: true, unique: true },
 //     parent_name: { type: String, required: true },
 //     contact_number: { type: String, required: true },
@@ -18,11 +20,16 @@
 //     recommended_programs: { type: String },
 //     join_date: { type: Date, required: true, default: Date.now },
 //     approved_at: { type: Date, default: Date.now },
-//     password: { type: String, required: true }, // ✅ Hashed Password
-//     udid: { type: String, required: true, unique: true } // ✅ Added UDID
+//     password: { type: String, required: true },
+//     udid: { type: String, required: true, unique: true },
+
+//     // Assignments
+//     teacher_id: { type: mongoose.Schema.Types.ObjectId, ref: "ApprovedEmployee" }, // Assigned Teacher
+//     courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }] // Assigned Courses
 // });
 
 // module.exports = mongoose.model("ApprovedStudent", approvedStudentSchema);
+
 const mongoose = require("mongoose");
 
 const approvedStudentSchema = new mongoose.Schema({
@@ -47,7 +54,42 @@ const approvedStudentSchema = new mongoose.Schema({
 
     // Assignments
     teacher_id: { type: mongoose.Schema.Types.ObjectId, ref: "ApprovedEmployee" }, // Assigned Teacher
-    courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }] // Assigned Courses
+    courses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }], // Assigned Courses
+
+    // Attendance Array
+    attendance: [
+        {
+            date: { type: Date, required: true },
+            status: { type: String, enum: ["Present", "Absent", "Late"], required: true },
+            remarks: { type: String }
+        }
+    ],
+
+    // Monthly Evaluations
+    monthly_evaluation: [
+        {
+            month: { type: String, required: true },
+            communication: {
+                score: { type: Number, min: 0, max: 100, required: true },
+                comments: { type: String }
+            },
+            cognition: {
+                score: { type: Number, min: 0, max: 100, required: true },
+                comments: { type: String }
+            },
+            academics_OBE_Level_A: {
+                score: { type: Number, min: 0, max: 100, required: true },
+                comments: { type: String }
+            },
+            functional_skills: {
+                score: { type: Number, min: 0, max: 100, required: true },
+                comments: { type: String }
+            }
+        }
+    ],
+
+    // Common Area of Improvement
+    area_to_improve: { type: String }
 });
 
 module.exports = mongoose.model("ApprovedStudent", approvedStudentSchema);
