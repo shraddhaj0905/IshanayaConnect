@@ -69,7 +69,7 @@ function Home() {
 
           <div
             className="home-card transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:bg-gray-200 flex flex-col items-center gap-y-4 border border-black"
-            onClick={() => navigate("/attendance")}
+            onClick={() => navigate("/attendanceMakingpage")}
           >
             <img
               src={attendence}
@@ -82,7 +82,7 @@ function Home() {
 
           <div
             className="home-card transform transition-all duration-300 hover:scale-105 hover:shadow-lg hover:bg-gray-200 flex flex-col items-center gap-y-4 border border-black"
-            onClick={() => navigate("/EmployeeReport")}
+            onClick={() => navigate("/studentsforreport")}
           >
             <img
               src={Assment}

@@ -366,6 +366,9 @@ import Mystudent from "./pages/Mystudent"
 import EmployeeReport from "./components/EmployeeReport"
 import EmployeeProfilePage from "./pages/EmployeeProfilePage";
 import Studentdetails from "./pages/StudentDDetails";
+import Displaystudent from "./pages/DisplayStudentForReport";
+import EditReport from "./pages/EditReport";
+import AttendanceMakingpage from "./pages/AttendanceMarkingPage"
 
 function App() {
   return (
@@ -450,6 +453,10 @@ function MainApp() {
         <Route path="/employeeReport" element={<EmployeeReport/>}/>
         <Route path="/employeeProfilePage" element={<EmployeeProfilePage></EmployeeProfilePage>}/>
         <Route path="/studentdetails/:id"  element={<Studentdetails/>}/>
+        <Route path="/studentsforreport"  element={<Displaystudent/>}/>
+        <Route path="/edit-report/:id" element={<EditReport />} />
+        <Route path="/attendanceMakingpage" element={<AttendanceMakingpage />} />
+
           </>
         ) : (
           <Route path="*" element={<Navigate to="/employeeLogin" />} />

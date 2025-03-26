@@ -60,7 +60,7 @@ const approvedStudentSchema = new mongoose.Schema({
     attendance: [
         {
             date: { type: Date, required: true },
-            status: { type: String, enum: ["Present", "Absent", "Late"], required: true },
+            status: { type: String, enum: ["Present", "Absent"], required: true },
             remarks: { type: String }
         }
     ],
@@ -70,26 +70,27 @@ const approvedStudentSchema = new mongoose.Schema({
         {
             month: { type: String, required: true },
             communication: {
-                score: { type: Number, min: 0, max: 100, required: true },
+                score: { type: Number, min: 0, max: 5, required: true },
                 comments: { type: String }
             },
             cognition: {
-                score: { type: Number, min: 0, max: 100, required: true },
+                score: { type: Number, min: 0, max: 5, required: true },
                 comments: { type: String }
             },
             academics_OBE_Level_A: {
-                score: { type: Number, min: 0, max: 100, required: true },
+                score: { type: Number, min: 0, max: 5, required: true },
                 comments: { type: String }
             },
             functional_skills: {
-                score: { type: Number, min: 0, max: 100, required: true },
+                score: { type: Number, min: 0, max: 5, required: true },
                 comments: { type: String }
             }
         }
     ],
 
     // Common Area of Improvement
-    area_to_improve: { type: String }
+    area_to_improve: { type: [String], default: [] }
+
 });
 
 module.exports = mongoose.model("ApprovedStudent", approvedStudentSchema);
