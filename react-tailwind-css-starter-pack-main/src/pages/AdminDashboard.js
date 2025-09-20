@@ -14,7 +14,8 @@ const AdminDashboard = () => {
     { title: "Add Admin", path: "/admin/add-admin" },
     { title: "Send Interview Email", path: "/admin/send-interview-email" },
     { title: "Send Appointment Email", path: "/admin/send-appointment-email" },
-    { title: "Create Course", path: "/admin/create-course" }, // New Create Course card
+    { title: "Create Course", path: "/admin/create-course" },
+    {title:"Announcements",path:"/admin/announcement"},
   ];
 
   return (

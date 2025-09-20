@@ -366,8 +366,14 @@ import Mystudent from "./pages/Mystudent"
 import EmployeeReport from "./components/EmployeeReport"
 import EmployeeProfilePage from "./pages/EmployeeProfilePage";
 import Studentdetails from "./pages/StudentDDetails";
-import Displaystudent from "./pages/DisplayStudentsForReport";
-import EditReport from "./pages/EditReport"
+import Displaystudent from "./pages/DisplayStudentForReport";
+import EditReport from "./pages/EditReport";
+import AttendanceMakingpage from "./pages/AttendanceMarkingPage";
+import CreateAnnouncement from "./pages/createannouncment"
+
+
+import Announcements from "./pages/AnnounanceSection";
+import StudentReportForParent from "./pages/StududentReportForParent"
 
 function App() {
   return (
@@ -439,6 +445,7 @@ function MainApp() {
             <Route path="/admin/send-interview-email" element={<SendInterviewEmail />} /> {/* ✅ New */}
             <Route path="/admin/send-appointment-email" element={<SendAppointmentEmail />} /> {/* ✅ New */}
             <Route path="/admin/create-course" element={< CreateCourseForm/>} /> {/* ✅ New */}
+            <Route path="/admin/announcement" element={< CreateAnnouncement/>} /> {/* ✅ New */}
 
           </>
         ) : (
@@ -453,12 +460,27 @@ function MainApp() {
         <Route path="/employeeProfilePage" element={<EmployeeProfilePage></EmployeeProfilePage>}/>
         <Route path="/studentdetails/:id"  element={<Studentdetails/>}/>
         <Route path="/studentsforreport"  element={<Displaystudent/>}/>
-        <Route path="/edit-report/:id"  element={<EditReport/>}/>
+        <Route path="/edit-report/:id" element={<EditReport />} />
+        <Route path="/attendanceMakingpage" element={<AttendanceMakingpage />} />
+
+          </>
+        ) : (
+          <Route path="*" element={<Navigate to="/employeeLogin" />} />
+        )}
+
+
+
+{isParentAuthenticated ? (
+          <>
+            <Route path="/announancementpage" element={<Announcements />} />
+            <Route path="/studentreportforparent" element={<StudentReportForParent />} />
+
           </>
         ) : (
           <Route path="*" element={<Navigate to="/employeeLogin" />} />
         )}
       </Routes>
+
     </div>
   );
 }

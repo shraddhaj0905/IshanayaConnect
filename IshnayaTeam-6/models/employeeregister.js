@@ -12,8 +12,8 @@ const employeeRegistrationSchema = new mongoose.Schema({
   skills: { type: [String] }, // ✅ Fix here (Array of Strings)
 
   resume: { type: String }, // Stores uploaded file URL/path
-
-
+  status:{type:String, enum: ["Registred", "Pending",],default: "Registered"  },
+  
 });
 
 module.exports = mongoose.model("EmployeeRegistration", employeeRegistrationSchema);
