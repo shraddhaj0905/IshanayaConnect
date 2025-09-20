@@ -5,10 +5,7 @@ const EmployeeRegistration = require("../models/employeeregister");
 const JWT_SECRET = process.env.JWT_SECRET || "babbar";
 const ApprovedEmployee = require("../models/approveemployee");
 
-
 dotenv.config();
-
-
 
 exports.employeeSignup = async (req, res) => {
     try {
@@ -236,5 +233,33 @@ exports.markAttendance = async (req, res) => {
   } catch (error) {
     console.error("Server Error:", error);
     res.status(500).json({ message: "Server error while marking attendance." });
+  }
+};
+
+
+exports.getTeacherProfile = async (req, res) => {
+  try {
+    console.log("🔹 Request received for teacher profile");
+
+    if (!req.employee || !req.employee.id) {
+      console.error("❌ Employee ID not found in req.employee");
+      return res.status(400).json({ message: "Employee ID not provided" });
+    }
+
+    const employeeId = req.employee.id; // ✅ Use _id from token
+    console.log("🔹 Employee ObjectId:", employeeId);
+
+    // ✅ Find employee by _id instead of emp_reg_id
+    const teacher = await ApprovedEmployee.findById(employeeId);
+
+    if (!teacher) {
+      console.error(`❌ No teacher found for ID: ${employeeId}`);
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.json(teacher);
+  } catch (error) {
+    console.error("❌ Error fetching teacher profile:", error.message);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

@@ -151,6 +151,256 @@
 // }
 
 
+// import { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { getInitialLetter } from "../utils/helpers"; // Adjust path as needed
+
+
+// export default function MyStudent() {
+//   const [search, setSearch] = useState("");
+//   const [students, setStudents] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const navigate = useNavigate();
+
+//   // Function to fetch assigned students
+//   const fetchAssignedStudents = async () => {
+//     try {
+//       const token = localStorage.getItem("employeeToken");
+//       if (!token) {
+//         setError("No authentication token found. Please login.");
+//         setLoading(false);
+//         return;
+//       }
+
+//       // Decode JWT token to get employee ID
+//       const decodedToken = JSON.parse(atob(token.split(".")[1]));
+//       const empID = decodedToken.id;
+
+//       const response = await fetch(
+//         `http://localhost:4000/api/employees/assigned-students/${empID}`,
+//         {
+//           method: "GET",
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
+
+//       if (!response.ok) {
+//         throw new Error("Failed to fetch students.");
+//       }
+
+//       const data = await response.json();
+//       setStudents(data.students || []); // Ensure students array is set properly
+//     } catch (error) {
+//       console.error("Error fetching students:", error);
+//       setError(error.message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchAssignedStudents();
+//   }, []);
+
+//   // Ensure students is an array before filtering
+//   const filteredStudents = Array.isArray(students)
+//     ? students.filter((student) =>
+//         student.student_name?.toLowerCase().includes(search.toLowerCase()) ||
+//         student.student_id?.toLowerCase().includes(search.toLowerCase())
+//       )
+//     : [];
+
+//   return (
+//     <div className="min-h-screen bg-white text-black p-6">
+//       <h1 className="text-3xl font-bold text-center text-black">My Students</h1>
+//       {loading && <p className="text-center text-gray-500">Loading...</p>}
+//       {error && <p className="text-center text-red-500">{error}</p>}
+//       <p className="text-center text-gray-400 mb-4">Total Students: {students.length}</p>
+
+//       {/* Search Bar */}
+//       <div className="flex justify-center gap-4 mb-6">
+//         <input
+//           type="text"
+//           placeholder="Search by student name or ID..."
+//           className="p-2 w-80 border rounded-lg shadow-sm focus:ring focus:ring-[#4A90E2] bg-white text-black"
+//           onChange={(e) => setSearch(e.target.value)}
+//         />
+//       </div>
+
+//       {/* Student Cards Grid */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//         {filteredStudents.length > 0 ? (
+//           filteredStudents.map((student) => (
+//             <div
+
+              
+//               key={student._id}
+//               className="bg-gray-200 shadow-lg rounded-lg p-4 text-center transition transform hover:scale-105 hover:shadow-xl border border-black"
+//             >
+//               <div className="flex justify-center mb-3">
+//                 {student.profilePicture ? (
+//                   <img
+//                     src={student.profilePicture}
+//                     alt={student.student_name}
+//                     className="w-20 h-20 rounded-full border-2 border-black shadow-md"
+//                   />
+//                 ) : (
+//                   <div className="w-20 h-20 flex justify-center items-center bg-blue-100 text-black text-3xl font-bold rounded-full border-2 border-black shadow-md">
+//                     {getInitialLetter(student.student_name)}
+//                   </div>
+//                 )}
+//               </div>
+//               <h2 className="text-xl font-bold text-black mt-2">{student.student_name || "N/A"}</h2>
+//               <p className="text-black-500">Student ID: {student.student_id || "N/A"}</p>
+//               <p className="text-black-500">Gender: {student.gender || "N/A"}</p>
+//               <p className="text-black-500">Contact: {student.contact_number || "N/A"}</p>
+//               <p className="text-black-500">
+//                 Courses:{" "}
+//                 {student.courses?.length > 0
+//                   ? student.courses.map((course) => course.name).join(", ")
+//                   : "N/A"}
+//               </p>
+//               <button
+//                 className="mt-3 px-4 py-2 bg-black text-white rounded-lg hover:bg-black transition transform hover:scale-105 hover:shadow-md"
+//                 onClick={() => navigate(`/studentdetails/${student._id}`, { state: { student } })}
+//               >
+//                 View Details
+//               </button>
+//             </div>
+//           ))
+//         ) : (
+//           !loading && <p className="text-center text-gray-500">No students found.</p>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+// import { useState, useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { getInitialLetter } from "../utils/helpers"; // Ensure correct path
+
+// export default function MyStudent() {
+//   const [search, setSearch] = useState("");
+//   const [students, setStudents] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+//   const navigate = useNavigate();
+
+//   const fetchAssignedStudents = async () => {
+//     try {
+//       const token = localStorage.getItem("employeeToken");
+//       if (!token) {
+//         setError("No authentication token found. Please login.");
+//         setLoading(false);
+//         return;
+//       }
+
+//       const decodedToken = JSON.parse(atob(token.split(".")[1]));
+//       const empID = decodedToken.id;
+
+//       const response = await fetch(
+//         `http://localhost:4000/api/employees/assigned-students/${empID}`,
+//         {
+//           method: "GET",
+//           headers: {
+//             Authorization: `Bearer ${token}`,
+//             "Content-Type": "application/json",
+//           },
+//         }
+//       );
+
+//       if (!response.ok) {
+//         throw new Error("Failed to fetch students.");
+//       }
+
+//       const data = await response.json();
+//       setStudents(data.students || []);
+//     } catch (error) {
+//       console.error("Error fetching students:", error);
+//       setError(error.message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchAssignedStudents();
+//   }, []);
+
+//   const filteredStudents = Array.isArray(students)
+//     ? students.filter((student) =>
+//         student.student_name?.toLowerCase().includes(search.toLowerCase()) ||
+//         student.student_id?.toLowerCase().includes(search.toLowerCase())
+//       )
+//     : [];
+
+//   return (
+//     <div className="min-h-screen bg-white text-black p-6">
+//       <h1 className="text-3xl font-bold text-center text-black">My Students</h1>
+//       {loading && <p className="text-center text-gray-500">Loading...</p>}
+//       {error && <p className="text-center text-red-500">{error}</p>}
+//       <p className="text-center text-gray-400 mb-4">Total Students: {students.length}</p>
+
+//       <div className="flex justify-center gap-4 mb-6">
+//         <input
+//           type="text"
+//           placeholder="Search by student name or ID..."
+//           className="p-2 w-80 border rounded-lg shadow-sm focus:ring focus:ring-[#4A90E2] bg-white text-black"
+//           onChange={(e) => setSearch(e.target.value)}
+//         />
+//       </div>
+
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+//         {filteredStudents.length > 0 ? (
+//           filteredStudents.map((student) => (
+//             <div
+//               key={student._id}
+//               className="bg-gray-200 shadow-lg rounded-lg p-4 text-center transition transform hover:scale-105 hover:shadow-xl border border-black"
+//             >
+//               <div className="flex justify-center mb-3">
+//                 {student.profilePicture ? (
+//                   <img
+//                     src={student.profilePicture}
+//                     alt={student.student_name}
+//                     className="w-20 h-20 rounded-full border-2 border-black shadow-md"
+//                   />
+//                 ) : (
+//                   <div className="w-20 h-20 flex justify-center items-center bg-blue-100 text-black text-3xl font-bold rounded-full border-2 border-black shadow-md">
+//                     {getInitialLetter(student?.student_name)}
+//                   </div>
+//                 )}
+//               </div>
+//               <h2 className="text-xl font-bold text-black mt-2">{student.student_name || "N/A"}</h2>
+//               <p className="text-black-500">Student ID: {student.student_id || "N/A"}</p>
+//               <p className="text-black-500">Gender: {student.gender || "N/A"}</p>
+//               <p className="text-black-500">Contact: {student.contact_number || "N/A"}</p>
+//               <p className="text-black-500">
+//                 Courses:{" "}
+//                 {student.courses?.length > 0
+//                   ? student.courses.map((course) => course.name).join(", ")
+//                   : "N/A"}
+//               </p>
+//               <button
+//                 className="mt-3 px-4 py-2 bg-black text-white rounded-lg hover:bg-black transition transform hover:scale-105 hover:shadow-md"
+//                 onClick={() => navigate(`/studentdetails/${student._id}`, { state: { student } })}
+//               >
+//                 View Details
+//               </button>
+//             </div>
+//           ))
+//         ) : (
+//           !loading && <p className="text-center text-gray-500">No students found.</p>
+//         )}
+//       </div>
+//     </div>
+//   );
+// }
+
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -160,6 +410,11 @@ export default function MyStudent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  // Function to get the initial letter of a student's name
+  const getInitialLetter = (name) => {
+    return name ? name.charAt(0).toUpperCase() : "?";
+  };
 
   // Function to fetch assigned students
   const fetchAssignedStudents = async () => {
@@ -237,6 +492,19 @@ export default function MyStudent() {
               key={student._id}
               className="bg-gray-200 shadow-lg rounded-lg p-4 text-center transition transform hover:scale-105 hover:shadow-xl border border-black"
             >
+              <div className="flex justify-center mb-3">
+                {student.profilePicture ? (
+                  <img
+                    src={student.profilePicture}
+                    alt={student.student_name}
+                    className="w-20 h-20 rounded-full border-2 border-black shadow-md"
+                  />
+                ) : (
+                  <div className="w-20 h-20 flex justify-center items-center bg-blue-100 text-black text-3xl font-bold rounded-full border-2 border-black shadow-md">
+                    {getInitialLetter(student.student_name)}
+                  </div>
+                )}
+              </div>
               <h2 className="text-xl font-bold text-black mt-2">{student.student_name || "N/A"}</h2>
               <p className="text-black-500">Student ID: {student.student_id || "N/A"}</p>
               <p className="text-black-500">Gender: {student.gender || "N/A"}</p>

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const adminAuth = require("../middlewares/adminauth"); // ✅ Protect route with admin auth
 
-const { addAdmin, approveStudent, approveEmployee , getAllStudents, getApprovedStudents,getRegisteredEmployees , getApprovedEmployees , sendAppointmentEmails, sendInterviewEmail,assignTeacherToStudent,assignCourseToStudent ,createCourse,getCourses  } = require("../controllers/adminController"); // ✅ Import all functions
+const { addAdmin, approveStudent, approveEmployee , getAllStudents,getScheduledInterviews, getApprovedStudents,getRegisteredEmployees , getApprovedEmployees , sendAppointmentEmails, sendInterviewEmail,assignTeacherToStudent,assignCourseToStudent ,createCourse,getCourses,createAnnouncement   } = require("../controllers/adminController"); // ✅ Import all functions
 const adminController = require("../controllers/adminAuthController");
 
 //  Admin login route
@@ -29,4 +29,6 @@ router.put("/assign-teacher", adminAuth,assignTeacherToStudent);
 router.put("/assign-course", adminAuth,assignCourseToStudent);
 router.post("/create-course", adminAuth,createCourse);
 router.get("/get-courses",adminAuth,getCourses);
+router.post("/create-announcement", adminAuth, createAnnouncement);
+router.post("/getscheduled",getScheduledInterviews);
 module.exports = router;

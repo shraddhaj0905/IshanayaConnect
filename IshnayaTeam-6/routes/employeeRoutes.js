@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {employeeSignup,employeeLogin,getStudentsByEmployeeId,updateMonthlyEvaluation ,getStudentById,markAttendance } = require("../controllers/employeeAuthControllers"); // ✅ Fixed file name
+const {employeeSignup,employeeLogin,getStudentsByEmployeeId,updateMonthlyEvaluation ,getStudentById,markAttendance,getTeacherProfile } = require("../controllers/employeeAuthControllers"); // ✅ Fixed file name
 const EmployeeAuth = require("../middlewares/employeeauth");
 
 // Employee authentication routes
@@ -13,4 +13,6 @@ router.get("/get-student/:studentId", EmployeeAuth, getStudentById); // ✅ Plur
 router.post("/update-evaluation/:studentId", EmployeeAuth, updateMonthlyEvaluation);
 
 router.post("/mark-attendance", EmployeeAuth, markAttendance);
+
+router.get("/profile",EmployeeAuth, getTeacherProfile)
 module.exports = router;

@@ -368,7 +368,12 @@ import EmployeeProfilePage from "./pages/EmployeeProfilePage";
 import Studentdetails from "./pages/StudentDDetails";
 import Displaystudent from "./pages/DisplayStudentForReport";
 import EditReport from "./pages/EditReport";
-import AttendanceMakingpage from "./pages/AttendanceMarkingPage"
+import AttendanceMakingpage from "./pages/AttendanceMarkingPage";
+import CreateAnnouncement from "./pages/createannouncment"
+
+
+import Announcements from "./pages/AnnounanceSection";
+import StudentReportForParent from "./pages/StududentReportForParent"
 
 function App() {
   return (
@@ -440,6 +445,7 @@ function MainApp() {
             <Route path="/admin/send-interview-email" element={<SendInterviewEmail />} /> {/* ✅ New */}
             <Route path="/admin/send-appointment-email" element={<SendAppointmentEmail />} /> {/* ✅ New */}
             <Route path="/admin/create-course" element={< CreateCourseForm/>} /> {/* ✅ New */}
+            <Route path="/admin/announcement" element={< CreateAnnouncement/>} /> {/* ✅ New */}
 
           </>
         ) : (
@@ -461,7 +467,20 @@ function MainApp() {
         ) : (
           <Route path="*" element={<Navigate to="/employeeLogin" />} />
         )}
+
+
+
+{isParentAuthenticated ? (
+          <>
+            <Route path="/announancementpage" element={<Announcements />} />
+            <Route path="/studentreportforparent" element={<StudentReportForParent />} />
+
+          </>
+        ) : (
+          <Route path="*" element={<Navigate to="/employeeLogin" />} />
+        )}
       </Routes>
+
     </div>
   );
 }

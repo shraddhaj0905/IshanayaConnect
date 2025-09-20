@@ -5,7 +5,15 @@ const adminSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true }, // Hashed password
-  role: { type: String, enum: ["admin"], default: "admin" }
+  role: { type: String, enum: ["admin"], default: "admin" },
+  interviewsScheduled: [
+    {
+      interviewer: { type: mongoose.Schema.Types.ObjectId, ref: "EmployeeRegistration" },
+      candidateName: { type: String, required: true },
+      interviewDate: { type: String, required: true },
+      interviewTime: { type: String, required: true },
+      meetingLink: { type: String, required: true }
+    }],
 });
 // Function to create a default admin on startup
 adminSchema.statics.initializeAdmin = async function () {

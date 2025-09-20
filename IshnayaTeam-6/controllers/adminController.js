@@ -4,157 +4,8 @@ const ApprovedStudent = require("../models/approvestudent"); // Approved student
 const EmployeeRegistration = require("../models/employeeregister"); // Import EmployeeRegistration model
 const ApprovedEmployee = require("../models/approveemployee"); // 
 const Admin = require("../models/admin"); 
-const nodemailer = require("nodemailer");
+const nodemailer = require("nodemailer");  
 
-
-// exports.approveStudent = async (req, res) => {
-//     try {
-//         const { parent_email } = req.body;
-
-//         // Find the student in registration collection
-//         const student = await StudentRegistration.findOne({ parent_email });
-//         if (!student) {
-//             return res.status(404).json({ message: "Student not found for the given parent email." });
-//         }
-
-//         // Check if student is already approved
-//         const alreadyApproved = await ApprovedStudent.findOne({ parent_email });
-//         if (alreadyApproved) {
-//             return res.status(400).json({ message: "Student is already approved." });
-//         }
-
-//         // Generate Unique Student ID
-//         let student_id;
-//         let isUnique = false;
-//         while (!isUnique) {
-//             student_id = `STU-${Math.floor(100000 + Math.random() * 900000)}`;
-//             const existingStudent = await ApprovedStudent.findOne({ student_id });
-//             if (!existingStudent) isUnique = true;
-//         }
-
-//         // Create approved student entry
-//         const approvedStudent = new ApprovedStudent({
-//             student_id, // ✅ Store Unique ID
-//             parent_email: student.parent_email,
-//             parent_name: student.parent_name,
-//             contact_number: student.contact_number,
-//             address: student.address,
-//             student_name: student.student_name,
-//             dob: student.dob,
-//             blood_group: student.blood_group,
-//             gender: student.gender,
-//             disability_type: student.disability_type,
-//             disability_description: student.disability_description,
-//             special_requirements: student.special_requirements,
-//             previous_interventions: student.previous_interventions,
-//             recommended_programs: "",
-//             join_date: new Date(),
-//             approved_at: new Date(),
-//             password: student.password
-//         });
-
-//         await approvedStudent.save();
-//         await StudentRegistration.deleteOne({ parent_email }); // ✅ Delete from registered students
-
-//         res.status(201).json({ message: "Student approved successfully!", approvedStudent });
-
-//     } catch (error) {
-//         console.error("Internal Server Error:", error);
-//         res.status(500).json({ error: "Internal Server Error", details: error.message });
-//     }
-// };
-
-// exports.approveStudent = async (req, res) => {
-//     try {
-//         const { parent_email } = req.body; // Admin provides parent's email to approve student
-
-//         // Find the student using parent email
-//         const student = await StudentRegistration.findOne({ parent_email });
-
-//         if (!student) {
-//             return res.status(404).json({ message: "Student not found for the given parent email." });
-//         }
-
-//         // Check if student is already approved
-//         const alreadyApproved = await ApprovedStudent.findOne({ parent_email });
-//         if (alreadyApproved) {
-//             return res.status(400).json({ message: "Student is already approved." });
-//         }
-
-//         // Copy student details to ApprovedStudent
-//         const approvedStudent = new ApprovedStudent({
-//             parent_email: student.parent_email,
-//             parent_name: student.parent_name,
-//             contact_number: student.contact_number,
-//             address: student.address,
-//             student_name: student.student_name,
-//             dob: student.dob,
-//             blood_group: student.blood_group,
-//             gender: student.gender,
-//             disability_type: student.disability_type,
-//             disability_description: student.disability_description,
-//             special_requirements: student.special_requirements,
-//             previous_interventions: student.previous_interventions,
-//             recommended_programs: "",
-//             join_date: new Date(),
-//             approved_at: new Date(),
-//             password: student.password // Copy hashed password directly
-//         });
-
-//         await approvedStudent.save(); // Save to ApprovedStudent collection
-
-//         await StudentRegistration.deleteOne({ parent_email }); // ✅ Delete from StudentRegistration
-
-//         res.status(201).json({ message: "Student approved and removed from registered list!", approvedStudent });
-
-//     } catch (error) {
-//         console.error("Internal Server Error:", error);
-//         res.status(500).json({ error: "Internal Server Error", details: error.message });
-//     }
-// };
-
-
-// exports.approveEmployee = async (req, res) => {
-//     try {
-//         const { email } = req.body; // Admin provides email to approve employee
-
-//         // Find the employee using email
-//         const employee = await EmployeeRegistration.findOne({ email });
-
-//         if (!employee) {
-//             return res.status(404).json({ message: "Employee not found for the given email." });
-//         }
-
-//         // Check if employee is already approved
-//         const alreadyApproved = await ApprovedEmployee.findOne({ email });
-//         if (alreadyApproved) {
-//             return res.status(400).json({ message: "Employee is already approved." });
-//         }
-
-//         //  Copy the hashed password from EmployeeRegistration (DO NOT HASH AGAIN)
-//         const approvedEmployee = new ApprovedEmployee({
-//             name: employee.name,
-//             email: employee.email,
-//             contact_number: employee.contact_number,
-//             address: employee.address,
-//             qualifications: employee.qualifications,
-//             experience: employee.experience,
-//             skills: employee.skills,
-//             resume: employee.resume,
-//             join_date: new Date(),
-//             approved_at: new Date(),
-//             password: employee.password //  Copy hashed password directly
-//         });
-
-//         await approvedEmployee.save();
-
-//         res.status(201).json({ message: "Employee approved successfully!", approvedEmployee });
-
-//     } catch (error) {
-//         console.error("Internal Server Error:", error);
-//         res.status(500).json({ error: "Internal Server Error", details: error.message });
-//     }
-// };
 exports.approveStudent = async (req, res) => {
     try {
         const { udid } = req.params; // ✅ Fetching UDID from URL params
@@ -565,66 +416,203 @@ exports.sendAppointmentEmails = async (req, res) => {
 // };
 
 
+
+
+const crypto = require("crypto");
+
+// exports.sendInterviewEmail = async (req, res) => {
+//     try {
+//         const { email, name, interview_date, interview_time } = req.body;
+
+//         // Validate request body
+//         if (!email || !name || !interview_date || !interview_time) {
+//             return res.status(400).json({ message: "Email, name, interview date, and interview time are required" });
+//         }
+
+//         const lowerCaseEmail = email.toLowerCase();
+
+//         // Check if the employee exists in the database
+//         const employee = await EmployeeRegistration.findOne({ email: lowerCaseEmail });
+//         if (!employee) {
+//             return res.status(404).json({ message: "Employee not found in the registered database" });
+//         }
+
+//         // Ensure email credentials are set
+//         if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
+//             return res.status(500).json({ error: "Email configuration missing" });
+//         }
+
+//         console.log("📧 Setting up email transport...");
+//         const transporter = nodemailer.createTransport({
+//             host: "smtp.gmail.com",
+//             port: 587,
+//             secure: false,
+//             auth: {
+//                 user: process.env.MAIL_USER,
+//                 pass: process.env.MAIL_PASS,
+//             },
+//         });
+
+//         console.log("✅ Email transport configured successfully");
+
+//         // 🔹 Generate unique Jitsi meeting link
+//         const uniqueId = crypto.randomBytes(6).toString("hex"); // random secure string
+//         const meetingLink = `https://meet.jit.si/interview-${name}-${uniqueId}`;
+
+//         // Define Email Content
+//         const mailOptions = {
+//             from: process.env.MAIL_USER,
+//             to: lowerCaseEmail,
+//             subject: "Interview Confirmation",
+//             html: `
+//                 <h2>Interview Confirmation</h2>
+//                 <p>Dear <b>${name}</b>,</p>
+//                 <p>We are pleased to inform you that your interview is scheduled on 
+//                    <b>${interview_date}</b> at <b>${interview_time}</b>.</p>
+//                 <p>Join the interview using the link below:</p>
+//                 <p><a href="${meetingLink}" target="_blank">${meetingLink}</a></p>
+//                 <p>Best Regards,<br><b>HR Team</b></p>
+//             `,
+//         };
+
+//         // Send a quick response to avoid blocking the request
+//         res.status(200).json({ 
+//             message: "Interview email is being sent", 
+//             meetingLink // optional: return link in API response too
+//         });
+
+//         // Send Email asynchronously
+//         transporter.sendMail(mailOptions)
+//             .then(info => console.log("✅ Email sent successfully:", info.response))
+//             .catch(error => console.error("❌ Email send error:", error));
+
+//     } catch (error) {
+//         console.error("❌ Error in sendInterviewEmail:", error);
+//         res.status(500).json({ error: "Failed to send email" });
+//     }
+// };
+
+
+
 exports.sendInterviewEmail = async (req, res) => {
-    try {
-        const { email, name, interview_date, interview_time } = req.body;
+  try {
+    const { email, name, interview_date, interview_time } = req.body;
 
-        // Validate request body
-        if (!email || !name || !interview_date || !interview_time) {
-            return res.status(400).json({ message: "Email, name, interview date, and interview time are required" });
-        }
-
-        const lowerCaseEmail = email.toLowerCase();
-
-        // Check if the employee exists in the database
-        const employee = await EmployeeRegistration.findOne({ email: lowerCaseEmail });
-        if (!employee) {
-            return res.status(404).json({ message: "Employee not found in the registered database" });
-        }
-
-        // Ensure email credentials are set
-        if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
-            return res.status(500).json({ error: "Email configuration missing" });
-        }
-
-        console.log("📧 Setting up email transport...");
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS,
-            },
-        });
-
-        console.log("✅ Email transport configured successfully");
-
-        // Define Email Content
-        const mailOptions = {
-            from: process.env.MAIL_USER,
-            to: lowerCaseEmail,
-            subject: "Interview Confirmation",
-            html: `
-                <h2>Interview Confirmation</h2>
-                <p>Dear <b>${name}</b>,</p>
-                <p>We are pleased to inform you that your interview is scheduled on <b>${interview_date}</b> at <b>${interview_time}</b>.</p>
-                <p>Best Regards,<br><b>HR Team</b></p>
-            `,
-        };
-
-        // Send a quick response to avoid blocking the request
-        res.status(200).json({ message: "Interview email is being sent" });
-
-        // Send Email asynchronously
-        transporter.sendMail(mailOptions)
-            .then(info => console.log("✅ Email sent successfully:", info.response))
-            .catch(error => console.error("❌ Email send error:", error));
-
-    } catch (error) {
-        console.error("❌ Error in sendInterviewEmail:", error);
-        res.status(500).json({ error: "Failed to send email" });
+    // Validate request body
+    if (!email || !name || !interview_date || !interview_time) {
+      return res.status(400).json({ message: "Email, name, interview date, and interview time are required" });
     }
+
+    const lowerCaseEmail = email.toLowerCase();
+
+    // Check if the employee exists
+    const employee = await EmployeeRegistration.findOne({ email: lowerCaseEmail });
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found in the registered database" });
+    }
+
+    // Ensure email credentials
+    if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
+      return res.status(500).json({ error: "Email configuration missing" });
+    }
+
+    // Generate unique Jitsi meeting link
+    const uniqueId = crypto.randomBytes(6).toString("hex");
+    const meetingLink = `https://meet.jit.si/interview-${name}-${uniqueId}`;
+
+    // Update employee status to "Pending"
+    employee.status = "Pending";
+    await employee.save();
+
+    // Save interview schedule under logged-in admin
+    const adminId = req.admin.id; // ✅ comes from JWT middleware
+    await Admin.findByIdAndUpdate(
+      adminId,
+      {
+        $push: {
+          interviewsScheduled: {
+            interviewer: employee._id,
+            candidateName: name,
+            interviewDate: interview_date,
+            interviewTime: interview_time,
+            meetingLink: meetingLink,
+          },
+        },
+      },
+      { new: true }
+    );
+
+    // Set up mailer
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
+      },
+    });
+
+    // Define email content
+    const mailOptions = {
+      from: process.env.MAIL_USER,
+      to: lowerCaseEmail,
+      subject: "Interview Confirmation",
+      html: `
+        <h2>Interview Confirmation</h2>
+        <p>Dear <b>${name}</b>,</p>
+        <p>Your interview is scheduled on <b>${interview_date}</b> at <b>${interview_time}</b>.</p>
+        <p>Join using this link: <a href="${meetingLink}" target="_blank">${meetingLink}</a></p>
+        <p>Best Regards,<br><b>HR Team</b></p>
+      `,
+    };
+
+    // Respond immediately
+    res.status(200).json({
+      message: "Interview scheduled and email is being sent",
+      meetingLink,
+    });
+
+    // Send email asynchronously
+    transporter
+      .sendMail(mailOptions)
+      .then(info => console.log("✅ Email sent:", info.response))
+      .catch(error => console.error("❌ Email error:", error));
+
+  } catch (error) {
+    console.error("❌ Error in sendInterviewEmail:", error);
+    res.status(500).json({ error: "Failed to send email" });
+  }
+};
+
+exports.getScheduledInterviews = async (req, res) => {
+  try {
+    const adminId = req.admin.id; // ✅ from middleware
+
+    // Populate interviewer (employee) details if needed
+    const admin = await Admin.findById(adminId)
+      .populate("interviewsScheduled.interviewer", "name email status");
+
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    // Return the interviews scheduled by this admin
+    res.status(200).json({
+      message: "Scheduled interviews fetched successfully",
+      interviews: admin.interviewsScheduled.map(interview => ({
+        candidateName: interview.candidateName,
+        interviewDate: interview.interviewDate,
+        interviewTime: interview.interviewTime,
+        meetingLink: interview.meetingLink,
+        interviewer: interview.interviewer // employee details from EmployeeRegistration
+      }))
+    });
+
+  } catch (error) {
+    console.error("❌ Error fetching scheduled interviews:", error);
+    res.status(500).json({ error: "Failed to fetch scheduled interviews" });
+  }
 };
 
 exports.assignTeacherToStudent = async (req, res) => {
@@ -733,5 +721,51 @@ exports.getCourses = async (req, res) => {
   
 
 
+  const Announcement = require("../models/announcement");
+
+  exports.createAnnouncement = async (req, res) => {
+      try {
+          const { title, description, date, category } = req.body;
+  
+          // Ensure all required fields are provided
+          if (!title || !description || !date || !category) {
+              return res.status(400).json({ message: "Title, description, date, and category are required" });
+          }
+  
+          // Validate category
+          const allowedCategories = ["Holiday", "Events", "Urgent"];
+          if (!allowedCategories.includes(category)) {
+              return res.status(400).json({ message: "Invalid category. Allowed values: Holiday, Events, Urgent" });
+          }
+  
+          // Check if the provided date is in the future
+          const currentDate = new Date();
+          const announcementDate = new Date(date);
+  
+          if (announcementDate <= currentDate) {
+              return res.status(400).json({ message: "Date must be in the future" });
+          }
+  
+          // Create new announcement
+          const announcement = new Announcement({
+              title,
+              description,
+              date: announcementDate, // Use provided future date
+              category
+          });
+  
+          // Save to database
+          await announcement.save();
+  
+          res.status(201).json({
+              message: "Announcement created successfully",
+              announcement
+          });
+      } catch (error) {
+          console.error("Error creating announcement:", error);
+          res.status(500).json({ message: "Server error" });
+      }
+  };
+  
 
 
