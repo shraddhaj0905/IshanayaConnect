@@ -1,16 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const {employeeSignup,employeeLogin,getStudentsByEmployeeId,updateMonthlyEvaluation ,getStudentById,markAttendance } = require("../controllers/employeeAuthControllers"); // ✅ Fixed file name
+const employeeController = require("../controllers/employeeAuthControllers"); // ✅ Fixed file name
 const EmployeeAuth = require("../middlewares/employeeauth");
 
 // Employee authentication routes
-router.post("/signup", employeeSignup);
-router.post("/login", employeeLogin);
+router.post("/signup", employeeController.employeeSignup);
+router.post("/login", employeeController.employeeLogin);
 
 // Fetch assigned students for an employee
-router.get("/assigned-students/:empID", EmployeeAuth, getStudentsByEmployeeId);
-router.get("/get-student/:studentId", EmployeeAuth, getStudentById); // ✅ Pluralized route name
-router.post("/update-evaluation/:studentId", EmployeeAuth, updateMonthlyEvaluation);
+router.get("/assigned-students/:empID", EmployeeAuth, employeeController.getStudentsByEmployeeId); // ✅ Pluralized route name
+router.get("/profile",EmployeeAuth, employeeController.getTeacherProfile);
 
-router.post("/mark-attendance", EmployeeAuth, markAttendance);
+
 module.exports = router;

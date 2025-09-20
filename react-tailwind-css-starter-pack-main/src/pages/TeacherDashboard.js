@@ -6,6 +6,7 @@ import student from "../assests/students group.jpg";
 import attendence from "../assests/Attendence.jpg";
 import Assment from "../assests/Assesment.webp";
 import EmployeeNavbar from "../components/EmployeeNavbar";
+import Displaystudent from "./DisplayStudentsForReport"
 
 function Home() {
   const navigate = useNavigate();

@@ -103,6 +103,7 @@ exports.getStudentsByEmployeeId = async (req, res) => {
 
 
 
+<<<<<<< Updated upstream
 const ApprovedStudent = require("../models/approvestudent");
 
 // ✅ Add or Update Monthly Evaluation for a Particular Student
@@ -238,3 +239,188 @@ exports.markAttendance = async (req, res) => {
     res.status(500).json({ message: "Server error while marking attendance." });
   }
 };
+=======
+// exports.getTeacherProfile = async (req, res) => {
+//   try {
+//     const emp_reg_id = req.user.emp_reg_id; // Assuming authentication middleware sets `req.user`
+
+//     if (!emp_reg_id) {
+//       return res.status(400).json({ message: "Employee ID not provided" });
+//     }
+
+//     const teacher = await ApprovedEmployee.findOne({ emp_reg_id });
+
+//     if (!teacher) {
+//       return res.status(404).json({ message: "Teacher not found" });
+//     }
+
+//     res.json(teacher);
+//   } catch (error) {
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+// exports.getTeacherProfile = async (req, res) => {
+//   try {
+//     console.log("🔹 Request received for teacher profile");
+//     console.log("🔹 Extracted User:", req.user); // Log the `req.user` object
+
+//     if (!req.user || !req.user.emp_reg_id) {
+//       return res.status(400).json({ message: "Employee ID not provided" });
+//     }
+
+//     const emp_reg_id = req.user.emp_reg_id;
+//     console.log("🔹 Employee ID:", emp_reg_id); // Log extracted Employee ID
+
+//     const teacher = await ApprovedEmployee.findOne({ emp_reg_id });
+
+//     if (!teacher) {
+//       return res.status(404).json({ message: "Teacher not found" });
+//     }
+
+//     res.json(teacher);
+//   } catch (error) {
+//     console.error("❌ Error fetching teacher profile:", error); // Log actual error
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+// exports.getTeacherProfile = async (req, res) => {
+//   try {
+//     console.log("🔹 Request received for teacher profile");
+//     console.log("🔹 Extracted User:", req.user); // Log the `req.user` object
+
+//     if (!req.user || !req.user.emp_reg_id) {
+//       return res.status(400).json({ message: "Employee ID not provided" });
+//     }
+
+//     const emp_reg_id = req.user.emp_reg_id;
+//     console.log("🔹 Employee ID:", emp_reg_id); // Log extracted Employee ID
+
+//     const teacher = await ApprovedEmployee.findOne({ emp_reg_id });
+
+//     if (!teacher) {
+//       return res.status(404).json({ message: "Teacher not found" });
+//     }
+
+//     res.json(teacher);
+//   } catch (error) {
+//     console.error("❌ Error fetching teacher profile:", error); // Log actual error
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+
+
+// exports.getTeacherProfile = async (req, res) => {
+//   try {
+//     console.log("🔹 Request received for teacher profile");
+
+//     if (!req.user || !req.user.emp_reg_id) {
+//       console.error("❌ Employee ID not found in req.user");
+//       return res.status(400).json({ message: "Employee ID not provided" });
+//     }
+
+//     const emp_reg_id = req.user.emp_reg_id;
+//     console.log("🔹 Employee ID:", emp_reg_id);
+
+//     const teacher = await ApprovedEmployee.findOne({ emp_reg_id });
+
+//     if (!teacher) {
+//       console.error(`❌ No teacher found for emp_reg_id: ${emp_reg_id}`);
+//       return res.status(404).json({ message: "Teacher not found" });
+//     }
+
+//     res.json(teacher);
+//   } catch (error) {
+//     console.error("❌ Error fetching teacher profile:", error);
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+// exports.getTeacherProfile = async (req, res) => {
+//   try {
+//     console.log("🔹 Request received for teacher profile");
+
+//     // Use req.employee instead of req.user
+//     if (!req.employee || !req.employee.emp_reg_id) {
+//       console.error("❌ Employee ID not found in req.employee");
+//       return res.status(400).json({ message: "Employee ID not provided" });
+//     }
+
+//     const emp_reg_id = req.employee.emp_reg_id; // Extract employee ID
+//     console.log("🔹 Employee ID:", emp_reg_id);
+
+//     const teacher = await ApprovedEmployee.findOne({ emp_reg_id });
+
+//     if (!teacher) {
+//       console.error(`❌ No teacher found for emp_reg_id: ${emp_reg_id}`);
+//       return res.status(404).json({ message: "Teacher not found" });
+//     }
+
+//     res.json(teacher);
+//   } catch (error) {
+//     console.error("❌ Error fetching teacher profile:", error);
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+
+
+// exports.getTeacherProfile = async (req, res) => {
+//   try {
+//     console.log("🔹 Request received for teacher profile");
+
+//     if (!req.employee || !req.employee._id) {
+//       console.error("❌ Employee ID not found in req.employee");
+//       return res.status(400).json({ message: "Employee ID not provided" });
+//     }
+
+//     const employeeId = req.employee._id; // ✅ Use ObjectId from middleware
+//     console.log("🔹 Employee ObjectId:", employeeId);
+
+//     const teacher = await ApprovedEmployee.findById(employeeId);
+
+//     if (!teacher) {
+//       console.error(`❌ No teacher found for ID: ${employeeId}`);
+//       return res.status(404).json({ message: "Teacher not found" });
+//     }
+
+//     res.json(teacher);
+//   } catch (error) {
+//     console.error("❌ Error fetching teacher profile:", error);
+//     res.status(500).json({ message: "Server error", error: error.message });
+//   }
+// };
+
+
+
+
+exports.getTeacherProfile = async (req, res) => {
+  try {
+    console.log("🔹 Request received for teacher profile");
+
+    if (!req.employee || !req.employee.id) {
+      console.error("❌ Employee ID not found in req.employee");
+      return res.status(400).json({ message: "Employee ID not provided" });
+    }
+
+    const employeeId = req.employee.id; // ✅ Use `_id` from token
+    console.log("🔹 Employee ObjectId:", employeeId);
+
+    // ✅ Find employee by `_id` instead of `emp_reg_id`
+    const teacher = await ApprovedEmployee.findById(employeeId);
+
+    if (!teacher) {
+      console.error(`❌ No teacher found for ID: ${employeeId}`);
+      return res.status(404).json({ message: "Teacher not found" });
+    }
+
+    res.json(teacher);
+  } catch (error) {
+    console.error("❌ Error fetching teacher profile:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+>>>>>>> Stashed changes
