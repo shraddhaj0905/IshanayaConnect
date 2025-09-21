@@ -370,6 +370,7 @@ import Displaystudent from "./pages/DisplayStudentForReport";
 import EditReport from "./pages/EditReport";
 import AttendanceMakingpage from "./pages/AttendanceMarkingPage";
 import CreateAnnouncement from "./pages/createannouncment"
+import AdminInterviews from "./pages/AdminInterviews";
 
 
 import Announcements from "./pages/AnnounanceSection";
@@ -446,6 +447,7 @@ function MainApp() {
             <Route path="/admin/send-appointment-email" element={<SendAppointmentEmail />} /> {/* ✅ New */}
             <Route path="/admin/create-course" element={< CreateCourseForm/>} /> {/* ✅ New */}
             <Route path="/admin/announcement" element={< CreateAnnouncement/>} /> {/* ✅ New */}
+            <Route path="/admin/interview" element={< AdminInterviews/>}/>
 
           </>
         ) : (

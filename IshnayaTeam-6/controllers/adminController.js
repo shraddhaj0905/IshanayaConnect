@@ -112,56 +112,115 @@ exports.approveStudent = async (req, res) => {
 //     }
 // };
 
+// exports.approveEmployee = async (req, res) => {
+//     try {
+//         const { email } = req.body;
+
+//         // Find the employee in registration collection
+//         const employee = await EmployeeRegistration.findOne({ email });
+//         if (!employee) {
+//             return res.status(404).json({ message: "Employee not found for the given email." });
+//         }
+
+//         // Check if employee is already approved
+//         const alreadyApproved = await ApprovedEmployee.findOne({ email });
+//         if (alreadyApproved) {
+//             return res.status(400).json({ message: "Employee is already approved." });
+//         }
+
+//         // Generate Unique Employee ID
+//         let emp_reg_id;
+//         let isUnique = false;
+//         while (!isUnique) {
+//             emp_reg_id = `EMP-${Math.floor(100000 + Math.random() * 900000)}`;
+//             const existingEmployee = await ApprovedEmployee.findOne({ emp_reg_id });
+//             if (!existingEmployee) isUnique = true;
+//         }
+
+//         // Create approved employee entry
+//         const approvedEmployee = new ApprovedEmployee({
+//             emp_reg_id, // ✅ Store Unique ID
+//             name: employee.name,
+//             email: employee.email,
+//             contact_number: employee.contact_number,
+//             address: employee.address,
+//             qualifications: employee.qualifications,
+//             experience: employee.experience,
+//             skills: employee.skills,
+//             resume: employee.resume,
+//             join_date: new Date(),
+//             approved_at: new Date(),
+//             password: employee.password
+//         });
+
+//         await approvedEmployee.save();
+//         await EmployeeRegistration.deleteOne({ email }); // ✅ Delete from registered employees
+
+//         res.status(201).json({ message: "Employee approved successfully!", approvedEmployee });
+
+//     } catch (error) {
+//         console.error("Internal Server Error:", error);
+//         res.status(500).json({ error: "Internal Server Error", details: error.message });
+//     }
+// };
+
+
 exports.approveEmployee = async (req, res) => {
-    try {
-        const { email } = req.body;
+  try {
+    const { email, adminId } = req.body; // pass adminId from frontend
 
-        // Find the employee in registration collection
-        const employee = await EmployeeRegistration.findOne({ email });
-        if (!employee) {
-            return res.status(404).json({ message: "Employee not found for the given email." });
-        }
-
-        // Check if employee is already approved
-        const alreadyApproved = await ApprovedEmployee.findOne({ email });
-        if (alreadyApproved) {
-            return res.status(400).json({ message: "Employee is already approved." });
-        }
-
-        // Generate Unique Employee ID
-        let emp_reg_id;
-        let isUnique = false;
-        while (!isUnique) {
-            emp_reg_id = `EMP-${Math.floor(100000 + Math.random() * 900000)}`;
-            const existingEmployee = await ApprovedEmployee.findOne({ emp_reg_id });
-            if (!existingEmployee) isUnique = true;
-        }
-
-        // Create approved employee entry
-        const approvedEmployee = new ApprovedEmployee({
-            emp_reg_id, // ✅ Store Unique ID
-            name: employee.name,
-            email: employee.email,
-            contact_number: employee.contact_number,
-            address: employee.address,
-            qualifications: employee.qualifications,
-            experience: employee.experience,
-            skills: employee.skills,
-            resume: employee.resume,
-            join_date: new Date(),
-            approved_at: new Date(),
-            password: employee.password
-        });
-
-        await approvedEmployee.save();
-        await EmployeeRegistration.deleteOne({ email }); // ✅ Delete from registered employees
-
-        res.status(201).json({ message: "Employee approved successfully!", approvedEmployee });
-
-    } catch (error) {
-        console.error("Internal Server Error:", error);
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
+    // Find the employee in registration collection
+    const employee = await EmployeeRegistration.findOne({ email });
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found for the given email." });
     }
+
+    // Check if employee is already approved
+    const alreadyApproved = await ApprovedEmployee.findOne({ email });
+    if (alreadyApproved) {
+      return res.status(400).json({ message: "Employee is already approved." });
+    }
+
+    // Generate Unique Employee ID
+    let emp_reg_id;
+    let isUnique = false;
+    while (!isUnique) {
+      emp_reg_id = `EMP-${Math.floor(100000 + Math.random() * 900000)}`;
+      const existingEmployee = await ApprovedEmployee.findOne({ emp_reg_id });
+      if (!existingEmployee) isUnique = true;
+    }
+
+    // Create approved employee entry
+    const approvedEmployee = new ApprovedEmployee({
+      emp_reg_id,
+      name: employee.name,
+      email: employee.email,
+      contact_number: employee.contact_number,
+      address: employee.address,
+      qualifications: employee.qualifications,
+      experience: employee.experience,
+      skills: employee.skills,
+      resume: employee.resume,
+      join_date: new Date(),
+      approved_at: new Date(),
+      password: employee.password
+    });
+    await approvedEmployee.save();
+
+    // Delete from registered employees
+    await EmployeeRegistration.deleteOne({ email });
+
+    // Remove from admin's interviewsScheduled array
+    await Admin.findByIdAndUpdate(adminId, {
+      $pull: { interviewsScheduled: { candidateEmail: email } }
+    });
+
+    res.status(201).json({ message: "Employee approved successfully!", approvedEmployee });
+
+  } catch (error) {
+    console.error("Internal Server Error:", error);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
 };
 
 exports.addAdmin = async (req, res) => {

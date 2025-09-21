@@ -30,5 +30,5 @@ router.put("/assign-course", adminAuth,assignCourseToStudent);
 router.post("/create-course", adminAuth,createCourse);
 router.get("/get-courses",adminAuth,getCourses);
 router.post("/create-announcement", adminAuth, createAnnouncement);
-router.post("/getscheduled",getScheduledInterviews);
+router.get("/getscheduled",adminAuth,getScheduledInterviews);
 module.exports = router;

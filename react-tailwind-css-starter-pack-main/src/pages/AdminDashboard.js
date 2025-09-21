@@ -16,6 +16,7 @@ const AdminDashboard = () => {
     { title: "Send Appointment Email", path: "/admin/send-appointment-email" },
     { title: "Create Course", path: "/admin/create-course" },
     {title:"Announcements",path:"/admin/announcement"},
+    {title:"Shortlisted",path:"/admin/interview"}
   ];
 
   return (
