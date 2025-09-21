@@ -7,5 +7,5 @@ router.post("/signup", studentSignup);
 router.post("/login", studentLogin);
 router.get("/attendance/:studentId",studentAuth, getOverallAttendance);
 router.get("/announcements", getFutureAnnouncements);
-router.get("/report/:studentId", studentAuth, getStudentReport);
+router.get("/report", studentAuth, getStudentReport); // remove :studentId
 module.exports = router;

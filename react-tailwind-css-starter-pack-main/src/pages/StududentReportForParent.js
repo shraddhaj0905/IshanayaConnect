@@ -1,211 +1,204 @@
-// import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Pie, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  ArcElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-// const studentReport = {
-//   name: "Devonte Smith",
-//   month: "March",
-//   year: "2025",
-//   attendance: {
-//     present: 20,
-//     absent: 2,
-//     percentage: 90,
-//   },
-//   evaluation: {
-//     communication: { rating: 4, comments: "Great speaker" },
-//     cognition: { rating: 3, comments: "Needs better problem-solving" },
-//     academics: { rating: 5, comments: "Excellent progress" },
-//     functional_skills: { rating: 4, comments: "Handles tasks well" },
-//   },
-//   notes: "Devonte is a fast learner but needs better focus to unlock his full potential.",
-// };
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  ArcElement,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-// const ReportComponent = () => {
-//   return (
-//     <div className="p-6 bg-gray-100 min-h-screen flex justify-center">
-//       <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-4xl border border-gray-400">
-//         {/* Student Report Title */}
-//         <div className="border-b-4 border-blue-800 pb-4 mb-6 text-center">
-//           <h2 className="text-4xl font-extrabold text-blue-800">Student Report</h2>
-//         </div>
-        
-//         <p className="text-center text-gray-900 font-bold text-2xl">{studentReport.name}</p>
-//         <p className="text-center text-gray-700 text-lg font-semibold">
-//           {studentReport.month}, {studentReport.year}
-//         </p>
+const StudentReportPage = () => {
+  const [report, setReport] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-//         {/* Attendance Section */}
-//         <div className="my-6 p-6 rounded-lg shadow-md border border-gray-300">
-//           <h3 className="text-2xl font-semibold text-blue-900 text-center">Attendance</h3>
-//           <table className="w-full mt-4 border-collapse border border-gray-300">
-//             <thead>
-//               <tr className="bg-gray-200">
-//                 <th className="border border-gray-300 p-2 text-lg">Present</th>
-//                 <th className="border border-gray-300 p-2 text-lg">Absent</th>
-//                 <th className="border border-gray-300 p-2 text-lg">Percentage</th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               <tr className="text-center">
-//                 <td className="border border-gray-300 p-2 text-lg text-green-600 font-bold">{studentReport.attendance.present}</td>
-//                 <td className="border border-gray-300 p-2 text-lg text-red-600 font-bold">{studentReport.attendance.absent}</td>
-//                 <td className="border border-gray-300 p-2 text-lg font-bold">{studentReport.attendance.percentage}%</td>
-//               </tr>
-//             </tbody>
-//           </table>
-//         </div>
+  useEffect(() => {
+    const fetchReport = async () => {
+      const token = localStorage.getItem("parentToken");
+      if (!token) {
+        setError("No token found. Please login.");
+        setLoading(false);
+        return;
+      }
 
-//         {/* Evaluation Section */}
-//         <div className="my-6 p-6 rounded-lg shadow-md border border-gray-300">
-//           <h3 className="text-3xl font-semibold text-gray-800 text-center">Evaluation</h3>
-//           <div className="grid grid-cols-2 gap-4 mt-4">
-//             {Object.entries(studentReport.evaluation).map(([category, data]) => (
-//               <div key={category} className="p-4 bg-gray-100 rounded-lg shadow-md">
-//                 <h4 className="text-xl font-bold capitalize text-gray-900 mb-1">{category.replace("_", " ")}</h4>
-//                 <p className="text-lg text-gray-800">⭐ {data.rating} / 5</p>
-//                 <p className="text-sm text-gray-700 italic">"{data.comments}"</p>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
+      try {
+        const res = await axios.get(
+          "http://localhost:4000/api/students/report",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        setReport(res.data.report);
+      } catch (err) {
+        setError(
+          err.response?.data?.message || "Failed to fetch report. Try login again."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
 
-//         {/* Notes Section */}
-//         <div className="p-6 bg-green-100 border-l-4 border-green-600 rounded-md">
-//           <h3 className="text-2xl font-semibold text-green-900">Notes</h3>
-//           <p className="text-lg text-gray-800">{studentReport.notes}</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
+    fetchReport();
+  }, []);
 
-// export default ReportComponent;
-import React from "react";
+  if (loading)
+    return <div className="p-5 text-center text-gray-700">Loading report...</div>;
+  if (error)
+    return <div className="p-5 text-center text-red-600 font-bold">{error}</div>;
 
-const studentReport = {
-  name: "Reshma Khande",
-  month: "March",
-  year: "2025",
-  attendance: {
-    present: 20,
-    absent: 2,
-    percentage: 90,
-  },
-  evaluation: {
-    communication: {
-      rating: 4,
-      comments: [
-        "Great speaker, actively participates.",
-        "Shares thoughts clearly in discussions.",
-        "Engages with peers and teachers well.",
-        "Expresses ideas with confidence.",
-        "Can improve clarity in complex topics.",
-      ],
+  // --- Attendance Donut Data ---
+  const attendanceData = {
+    labels: ["Present", "Absent"],
+    datasets: [
+      {
+        data: [
+          Number(report.attendance.presentDays),
+          Number(report.attendance.absentDays),
+        ],
+        backgroundColor: ["#4ade80", "#f87171"],
+        borderColor: ["#ffffff", "#ffffff"],
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const attendanceOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "bottom" },
+      title: { display: true, text: "Attendance", font: { size: 20 } },
     },
-    cognition: {
-      rating: 3,
-      comments: [
-        "Needs better problem-solving strategies.",
-        "Struggles with complex logical tasks.",
-        "Shows improvement with proper guidance.",
-        "Demonstrates curiosity for learning.",
-        "Needs to work on analytical thinking.",
-      ],
-    },
-    academics: {
-      rating: 5,
-      comments: [
-        "Excellent progress in all subjects.",
-        "Scores consistently high in assessments.",
-        "Completes assignments on time.",
-        "Pays attention to class discussions.",
-        "Can explore advanced concepts further.",
-      ],
-    },
-    functional_skills: {
-      rating: 4,
-      comments: [
-        "Manages tasks independently.",
-        "Works well in group projects.",
-        "Follows instructions accurately.",
-        "Shows responsibility in work.",
-        "Needs to improve time management.",
-      ],
-    },
-  },
-  notes:
-    "Reshma is a fast learner but needs better focus to unlock his full potential.",
-};
+  };
 
-const ReportComponent = () => {
+  // --- Monthly Evaluation Line Data ---
+  const evaluationData = {
+    labels: report.monthlyEvaluation.months,
+    datasets: [
+      {
+        label: "Communication",
+        data: report.monthlyEvaluation.communicationScores.map(Number),
+        borderColor: "#3b82f6",
+        backgroundColor: "#3b82f6",
+        tension: 0.4,
+        fill: false,
+      },
+      {
+        label: "Cognition",
+        data: report.monthlyEvaluation.cognitionScores.map(Number),
+        borderColor: "#f97316",
+        backgroundColor: "#f97316",
+        tension: 0.4,
+        fill: false,
+      },
+      {
+        label: "Academics",
+        data: report.monthlyEvaluation.academicsScores.map(Number),
+        borderColor: "#10b981",
+        backgroundColor: "#10b981",
+        tension: 0.4,
+        fill: false,
+      },
+      {
+        label: "Functional Skills",
+        data: report.monthlyEvaluation.functionalScores.map(Number),
+        borderColor: "#8b5cf6",
+        backgroundColor: "#8b5cf6",
+        tension: 0.4,
+        fill: false,
+      },
+    ],
+  };
+
+  const evaluationOptions = {
+    responsive: true,
+    plugins: {
+      legend: { position: "top" },
+      title: { display: true, text: "Monthly Evaluation", font: { size: 20 } },
+    },
+    scales: { y: { beginAtZero: true, max: 100 } },
+  };
+
   return (
-    <div className="p-6 bg-gray-100 min-h-screen flex justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-xl w-full max-w-4xl border border-gray-400">
-        {/* Student Report Title */}
-        <div className="border-b-4 border-blue-800 pb-4 mb-6 text-center bg-blue-100 p-4 rounded-lg">
-          <h2 className="text-4xl font-extrabold text-blue-800">Student Report</h2>
+    <div className="p-8 max-w-7xl mx-auto bg-white shadow-xl rounded-xl">
+      {/* Report Title */}
+      <h1 className="text-4xl font-bold text-center mb-8">Student Report</h1>
+
+      {/* Student Info Card */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="p-6 border rounded-lg shadow-sm bg-gray-50">
+          <h2 className="text-2xl font-semibold mb-4">Student Info</h2>
+          <p><strong>Name:</strong> {report.student_name}</p>
+          <p><strong>DOB:</strong> {new Date(report.dob).toLocaleDateString()}</p>
+          <p>
+            <strong>Disability:</strong> {report.disability_type} -{" "}
+            {report.disability_description}
+          </p>
+          <p>
+            <strong>Join Date:</strong>{" "}
+            {new Date(report.join_date).toLocaleDateString()}
+          </p>
         </div>
 
-        <p className="text-center text-gray-900 font-bold text-2xl">{studentReport.name}</p>
-        <p className="text-center text-gray-700 text-lg font-semibold">
-          {studentReport.month}, {studentReport.year}
-        </p>
-
-        {/* Attendance Section */}
-        <div className="my-6 p-6 rounded-lg shadow-md border border-gray-300 bg-gray-100">
-          <h3 className="text-2xl font-semibold text-blue-900 text-center">Attendance</h3>
-          <table className="w-full mt-4 border-collapse border border-gray-300 bg-white">
-            <thead>
-              <tr className="bg-gray-300">
-                <th className="border border-gray-300 p-2 text-lg">Present</th>
-                <th className="border border-gray-300 p-2 text-lg">Absent</th>
-                <th className="border border-gray-300 p-2 text-lg">Percentage</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="text-center">
-                <td className="border border-gray-300 p-2 text-lg text-green-600 font-bold">
-                  {studentReport.attendance.present}
-                </td>
-                <td className="border border-gray-300 p-2 text-lg text-red-600 font-bold">
-                  {studentReport.attendance.absent}
-                </td>
-                <td className="border border-gray-300 p-2 text-lg font-bold">
-                  {studentReport.attendance.percentage}%
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="p-6 border rounded-lg shadow-sm bg-gray-50">
+          <h2 className="text-2xl font-semibold mb-4">Teacher & Courses</h2>
+          <p><strong>Teacher:</strong> {report.teacher?.name || "-"}</p>
+          <p><strong>Email:</strong> {report.teacher?.email || "-"}</p>
+          <h3 className="mt-4 font-semibold">Courses:</h3>
+          <ul className="list-disc ml-5">
+            {report.courses.length > 0
+              ? report.courses.map((c) => (
+                  <li key={c._id}>
+                    {c.course_name} ({c.course_code})
+                  </li>
+                ))
+              : <li>No courses assigned.</li>}
+          </ul>
         </div>
+      </div>
 
-        {/* Evaluation Section */}
-        <div className="my-6 p-6 rounded-lg shadow-md border border-gray-300">
-          <h3 className="text-3xl font-semibold text-gray-800 text-center">Evaluation</h3>
+      {/* Attendance Donut */}
+<div className="mb-8 p-6 border rounded-lg shadow-sm bg-gray-50 flex flex-col items-center">
+  <div className="w-124 h-124"> {/* Fixed size container */}
+    <Pie data={attendanceData} options={attendanceOptions} />
+  </div>
+</div>
 
-          {/* Communication & Cognition (Side by Side) */}
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            {["communication", "cognition", "academics", "functional_skills"].map((category) => (
-              <div key={category} className="p-6 rounded-lg shadow-md bg-white text-center">
-                <h4 className="text-xl font-bold capitalize text-gray-900 mb-2">
-                  {category.replace("_", " ")}
-                </h4>
-                <p className="text-lg text-gray-800 font-semibold">⭐ {studentReport.evaluation[category].rating} / 5</p>
-                <ul className="text-md text-gray-900 font-medium list-disc pl-5 mt-3 text-left">
-                  {studentReport.evaluation[category].comments.map((comment, index) => (
-                    <li key={index} className="mb-1">{comment}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Notes Section */}
-        <div className="p-6 bg-green-100 border-l-4 border-green-600 rounded-md">
-          <h3 className="text-2xl font-semibold text-green-900">Notes</h3>
-          <p className="text-lg text-gray-800">{studentReport.notes}</p>
-        </div>
+      {/* Monthly Evaluation Line Chart */}
+      <div className="mb-8 p-6 border rounded-lg shadow-sm bg-gray-50">
+        <Line data={evaluationData} options={evaluationOptions} />
+      </div>
+
+      {/* Areas to Improve */}
+      <div className="p-6 border rounded-lg shadow-sm bg-gray-50">
+        <h2 className="text-2xl font-semibold mb-4">Areas to Improve</h2>
+        <ul className="list-disc ml-5">
+          {report.area_to_improve.length > 0
+            ? report.area_to_improve.map((area, i) => <li key={i}>{area}</li>)
+            : <li>No specific areas to improve.</li>}
+        </ul>
       </div>
     </div>
   );
 };
 
-export default ReportComponent;
+export default StudentReportPage;
+
+
