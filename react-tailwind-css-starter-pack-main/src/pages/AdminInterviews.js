@@ -1,624 +1,16 @@
-// // // // // // // import React, { useState } from "react";
-
-// // // // // // // export default function AdminInterviews() {
-// // // // // // //   // Hard-coded interview data
-// // // // // // //   const [interviews, setInterviews] = useState([
-// // // // // // //     {
-// // // // // // //       _id: "1",
-// // // // // // //       employeeName: "John Smith",
-// // // // // // //       interviewDate: "2025-09-25T10:00:00Z",
-// // // // // // //       meetingLink: "https://meet.google.com/abc-defg-hij",
-// // // // // // //       status: "Pending",
-// // // // // // //     },
-// // // // // // //     {
-// // // // // // //       _id: "2",
-// // // // // // //       employeeName: "Alice Johnson",
-// // // // // // //       interviewDate: "2025-09-26T14:30:00Z",
-// // // // // // //       meetingLink: "https://meet.google.com/xyz-uvw-rst",
-// // // // // // //       status: "Pending",
-// // // // // // //     },
-// // // // // // //     {
-// // // // // // //       _id: "3",
-// // // // // // //       employeeName: "Bob Williams",
-// // // // // // //       interviewDate: "2025-09-27T09:00:00Z",
-// // // // // // //       meetingLink: "https://meet.google.com/lmn-opq-rst",
-// // // // // // //       status: "Accepted",
-// // // // // // //     },
-// // // // // // //   ]);
-
-// // // // // // //   // Update status (Accept/Reject)
-// // // // // // //   const updateStatus = (id, status) => {
-// // // // // // //     setInterviews((prev) =>
-// // // // // // //       prev.map((i) => (i._id === id ? { ...i, status } : i))
-// // // // // // //     );
-// // // // // // //   };
-
-// // // // // // //   return (
-// // // // // // //     <div className="p-6">
-// // // // // // //       <h2 className="text-2xl font-bold mb-4">Interview Invitations</h2>
-// // // // // // //       <table className="w-full border-collapse border border-gray-300">
-// // // // // // //         <thead>
-// // // // // // //           <tr className="bg-gray-100">
-// // // // // // //             <th className="border px-4 py-2">Name</th>
-// // // // // // //             <th className="border px-4 py-2">Date</th>
-// // // // // // //             <th className="border px-4 py-2">Time</th>
-// // // // // // //             <th className="border px-4 py-2">Meeting Link</th>
-// // // // // // //             <th className="border px-4 py-2">Status</th>
-// // // // // // //             <th className="border px-4 py-2">Actions</th>
-// // // // // // //           </tr>
-// // // // // // //         </thead>
-// // // // // // //         <tbody>
-// // // // // // //           {interviews.length === 0 ? (
-// // // // // // //             <tr>
-// // // // // // //               <td colSpan="6" className="text-center py-4">
-// // // // // // //                 No interviews scheduled
-// // // // // // //               </td>
-// // // // // // //             </tr>
-// // // // // // //           ) : (
-// // // // // // //             interviews.map((i) => (
-// // // // // // //               <tr key={i._id}>
-// // // // // // //                 <td className="border px-4 py-2">{i.employeeName}</td>
-// // // // // // //                 <td className="border px-4 py-2">
-// // // // // // //                   {new Date(i.interviewDate).toLocaleDateString()}
-// // // // // // //                 </td>
-// // // // // // //                 <td className="border px-4 py-2">
-// // // // // // //                   {new Date(i.interviewDate).toLocaleTimeString([], {
-// // // // // // //                     hour: "2-digit",
-// // // // // // //                     minute: "2-digit",
-// // // // // // //                   })}
-// // // // // // //                 </td>
-// // // // // // //                 <td className="border px-4 py-2">
-// // // // // // //                   <a
-// // // // // // //                     href={i.meetingLink}
-// // // // // // //                     target="_blank"
-// // // // // // //                     rel="noopener noreferrer"
-// // // // // // //                     className="text-blue-500 underline"
-// // // // // // //                   >
-// // // // // // //                     Join Meeting
-// // // // // // //                   </a>
-// // // // // // //                 </td>
-// // // // // // //                 <td
-// // // // // // //                   className={`border px-4 py-2 ${
-// // // // // // //                     i.status === "Accepted"
-// // // // // // //                       ? "text-green-600"
-// // // // // // //                       : i.status === "Rejected"
-// // // // // // //                       ? "text-red-600"
-// // // // // // //                       : "text-gray-600"
-// // // // // // //                   }`}
-// // // // // // //                 >
-// // // // // // //                   {i.status}
-// // // // // // //                 </td>
-// // // // // // //                 <td className="border px-4 py-2 space-x-2">
-// // // // // // //                   <button
-// // // // // // //                     onClick={() => updateStatus(i._id, "Accepted")}
-// // // // // // //                     className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-// // // // // // //                     disabled={i.status === "Accepted"}
-// // // // // // //                   >
-// // // // // // //                     Accept
-// // // // // // //                   </button>
-// // // // // // //                   <button
-// // // // // // //                     onClick={() => updateStatus(i._id, "Rejected")}
-// // // // // // //                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-// // // // // // //                     disabled={i.status === "Rejected"}
-// // // // // // //                   >
-// // // // // // //                     Reject
-// // // // // // //                   </button>
-// // // // // // //                 </td>
-// // // // // // //               </tr>
-// // // // // // //             ))
-// // // // // // //           )}
-// // // // // // //         </tbody>
-// // // // // // //       </table>
-// // // // // // //     </div>
-// // // // // // //   );
-// // // // // // // }
-
-
-// // // // // // import React, { useState } from "react";
-
-// // // // // // export default function AdminInterviews() {
-// // // // // //   // Hard-coded interview data
-// // // // // //   const [interviews, setInterviews] = useState([
-// // // // // //     {
-// // // // // //       _id: "1",
-// // // // // //       employeeName: "John Smith",
-// // // // // //       interviewDate: "2025-09-25T10:00:00Z",
-// // // // // //       meetingLink: "https://meet.google.com/abc-defg-hij",
-// // // // // //       status: "Pending",
-// // // // // //     },
-// // // // // //     {
-// // // // // //       _id: "2",
-// // // // // //       employeeName: "Alice Johnson",
-// // // // // //       interviewDate: "2025-09-26T14:30:00Z",
-// // // // // //       meetingLink: "https://meet.google.com/xyz-uvw-rst",
-// // // // // //       status: "Pending",
-// // // // // //     },
-// // // // // //     {
-// // // // // //       _id: "3",
-// // // // // //       employeeName: "Bob Williams",
-// // // // // //       interviewDate: "2025-09-27T09:00:00Z",
-// // // // // //       meetingLink: "https://meet.google.com/lmn-opq-rst",
-// // // // // //       status: "Accepted",
-// // // // // //     },
-// // // // // //   ]);
-
-// // // // // //   // Accept or Reject: remove from list
-// // // // // //   const handleStatusUpdate = (id, status) => {
-// // // // // //     // In real app, call backend PATCH here
-
-// // // // // //     // Remove the employee from the list after updating status
-// // // // // //     setInterviews((prev) => prev.filter((i) => i._id !== id));
-// // // // // //   };
-
-// // // // // //   // Only show Pending employees
-// // // // // //   const pendingInterviews = interviews.filter((i) => i.status === "Pending");
-
-// // // // // //   return (
-// // // // // //     <div className="p-6">
-// // // // // //       <h2 className="text-2xl font-bold mb-4">Pending Interview Invitations</h2>
-// // // // // //       <table className="w-full border-collapse border border-gray-300">
-// // // // // //         <thead>
-// // // // // //           <tr className="bg-gray-100">
-// // // // // //             <th className="border px-4 py-2">Name</th>
-// // // // // //             <th className="border px-4 py-2">Date</th>
-// // // // // //             <th className="border px-4 py-2">Time</th>
-// // // // // //             <th className="border px-4 py-2">Meeting Link</th>
-// // // // // //             <th className="border px-4 py-2">Actions</th>
-// // // // // //           </tr>
-// // // // // //         </thead>
-// // // // // //         <tbody>
-// // // // // //           {pendingInterviews.length === 0 ? (
-// // // // // //             <tr>
-// // // // // //               <td colSpan="5" className="text-center py-4">
-// // // // // //                 No pending interviews
-// // // // // //               </td>
-// // // // // //             </tr>
-// // // // // //           ) : (
-// // // // // //             pendingInterviews.map((i) => (
-// // // // // //               <tr key={i._id}>
-// // // // // //                 <td className="border px-4 py-2">{i.employeeName}</td>
-// // // // // //                 <td className="border px-4 py-2">
-// // // // // //                   {new Date(i.interviewDate).toLocaleDateString()}
-// // // // // //                 </td>
-// // // // // //                 <td className="border px-4 py-2">
-// // // // // //                   {new Date(i.interviewDate).toLocaleTimeString([], {
-// // // // // //                     hour: "2-digit",
-// // // // // //                     minute: "2-digit",
-// // // // // //                   })}
-// // // // // //                 </td>
-// // // // // //                 <td className="border px-4 py-2">
-// // // // // //                   <a
-// // // // // //                     href={i.meetingLink}
-// // // // // //                     target="_blank"
-// // // // // //                     rel="noopener noreferrer"
-// // // // // //                     className="text-blue-500 underline"
-// // // // // //                   >
-// // // // // //                     Join Meeting
-// // // // // //                   </a>
-// // // // // //                 </td>
-// // // // // //                 <td className="border px-4 py-2 space-x-2">
-// // // // // //                   <button
-// // // // // //                     onClick={() => handleStatusUpdate(i._id, "Accepted")}
-// // // // // //                     className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-// // // // // //                   >
-// // // // // //                     Accept
-// // // // // //                   </button>
-// // // // // //                   <button
-// // // // // //                     onClick={() => handleStatusUpdate(i._id, "Rejected")}
-// // // // // //                     className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-// // // // // //                   >
-// // // // // //                     Reject
-// // // // // //                   </button>
-// // // // // //                 </td>
-// // // // // //               </tr>
-// // // // // //             ))
-// // // // // //           )}
-// // // // // //         </tbody>
-// // // // // //       </table>
-// // // // // //     </div>
-// // // // // //   );
-// // // // // // }
-
-
-// // // // // import React, { useState } from "react";
-
-// // // // // // Toast component
-// // // // // const Toast = ({ message, type, onClose }) => {
-// // // // //   const bgColor =
-// // // // //     type === "success" ? "bg-green-500" : type === "error" ? "bg-red-500" : "bg-gray-500";
-// // // // //   return (
-// // // // //     <div
-// // // // //       className={`${bgColor} text-white px-5 py-3 rounded shadow-lg fixed top-5 right-5 z-50 cursor-pointer animate-bounce`}
-// // // // //       onClick={onClose}
-// // // // //     >
-// // // // //       {message}
-// // // // //     </div>
-// // // // //   );
-// // // // // };
-
-// // // // // export default function AdminDashboard() {
-// // // // //   const [interviews, setInterviews] = useState([
-// // // // //     {
-// // // // //       _id: "1",
-// // // // //       employeeName: "John Smith",
-// // // // //       interviewDate: "2025-09-25T10:00:00Z",
-// // // // //       meetingLink: "https://meet.google.com/abc-defg-hij",
-// // // // //       status: "Pending",
-// // // // //     },
-// // // // //     {
-// // // // //       _id: "2",
-// // // // //       employeeName: "Alice Johnson",
-// // // // //       interviewDate: "2025-09-26T14:30:00Z",
-// // // // //       meetingLink: "https://meet.google.com/xyz-uvw-rst",
-// // // // //       status: "Pending",
-// // // // //     },
-// // // // //     {
-// // // // //       _id: "3",
-// // // // //       employeeName: "Bob Williams",
-// // // // //       interviewDate: "2025-09-27T09:00:00Z",
-// // // // //       meetingLink: "https://meet.google.com/lmn-opq-rst",
-// // // // //       status: "Accepted",
-// // // // //     },
-// // // // //   ]);
-
-// // // // //   const [toast, setToast] = useState(null);
-// // // // //   const [search, setSearch] = useState("");
-
-// // // // //   // Filter pending interviews by search
-// // // // //   const pendingInterviews = interviews
-// // // // //     .filter((i) => i.status === "Pending")
-// // // // //     .filter((i) => i.employeeName.toLowerCase().includes(search.toLowerCase()));
-
-// // // // //   const handleStatusUpdate = (id, status) => {
-// // // // //     const employee = interviews.find((i) => i._id === id);
-
-// // // // //     // Show toast
-// // // // //     setToast({ message: `${employee.employeeName} ${status}`, type: status === "Accepted" ? "success" : "error" });
-
-// // // // //     // Remove employee from pending list
-// // // // //     setInterviews((prev) => prev.filter((i) => i._id !== id));
-
-// // // // //     setTimeout(() => setToast(null), 3000);
-// // // // //   };
-
-// // // // //   return (
-// // // // //     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 p-6">
-// // // // //       <h1 className="text-4xl font-extrabold text-center text-blue-800 mb-6">Admin Interview Dashboard</h1>
-
-// // // // //       <div className="mb-5 flex justify-center">
-// // // // //         <input
-// // // // //           type="text"
-// // // // //           placeholder="Search employee..."
-// // // // //           value={search}
-// // // // //           onChange={(e) => setSearch(e.target.value)}
-// // // // //           className="w-full max-w-md px-4 py-2 rounded shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-// // // // //         />
-// // // // //       </div>
-
-// // // // //       {pendingInterviews.length === 0 ? (
-// // // // //         <p className="text-center text-gray-500 text-xl mt-10 animate-pulse">No pending interviews!</p>
-// // // // //       ) : (
-// // // // //         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-// // // // //           {pendingInterviews.map((i) => (
-// // // // //             <div
-// // // // //               key={i._id}
-// // // // //               className="bg-white rounded-xl shadow-lg p-5 relative overflow-hidden hover:scale-105 transform transition-transform duration-300 cursor-pointer"
-// // // // //             >
-// // // // //               {/* Animated status badge */}
-// // // // //               <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-white font-bold text-sm bg-gray-400 animate-pulse">
-// // // // //                 Pending
-// // // // //               </span>
-
-// // // // //               <h2 className="text-2xl font-semibold text-gray-800 mb-2">{i.employeeName}</h2>
-
-// // // // //               <p className="text-gray-600 mb-1">
-// // // // //                 <span className="font-medium">Date:</span> {new Date(i.interviewDate).toLocaleDateString()}
-// // // // //               </p>
-// // // // //               <p className="text-gray-600 mb-2">
-// // // // //                 <span className="font-medium">Time:</span>{" "}
-// // // // //                 {new Date(i.interviewDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-// // // // //               </p>
-
-// // // // //               <a
-// // // // //                 href={i.meetingLink}
-// // // // //                 target="_blank"
-// // // // //                 rel="noopener noreferrer"
-// // // // //                 className="inline-block text-blue-600 underline mb-4"
-// // // // //               >
-// // // // //                 Join Meeting
-// // // // //               </a>
-
-// // // // //               <div className="flex justify-between">
-// // // // //                 <button
-// // // // //                   onClick={() => handleStatusUpdate(i._id, "Accepted")}
-// // // // //                   className="flex-1 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg mr-2 transition-all duration-300 transform hover:scale-105"
-// // // // //                 >
-// // // // //                   Accept
-// // // // //                 </button>
-// // // // //                 <button
-// // // // //                   onClick={() => handleStatusUpdate(i._id, "Rejected")}
-// // // // //                   className="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105"
-// // // // //                 >
-// // // // //                   Reject
-// // // // //                 </button>
-// // // // //               </div>
-// // // // //             </div>
-// // // // //           ))}
-// // // // //         </div>
-// // // // //       )}
-
-// // // // //       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-// // // // //     </div>
-// // // // //   );
-// // // // // }
-
-
-// // // // import React, { useState } from "react";
-
-// // // // // Toast notification
-// // // // const Toast = ({ message, type, onClose }) => {
-// // // //   const bgColor =
-// // // //     type === "success" ? "bg-green-500" : type === "error" ? "bg-red-500" : "bg-gray-500";
-// // // //   return (
-// // // //     <div
-// // // //       className={`${bgColor} text-white px-5 py-3 rounded-xl shadow-lg fixed top-5 right-5 z-50 cursor-pointer animate-fade-in`}
-// // // //       onClick={onClose}
-// // // //     >
-// // // //       {message}
-// // // //     </div>
-// // // //   );
-// // // // };
-
-// // // // export default function AdminDashboard() {
-// // // //   const [interviews, setInterviews] = useState([
-// // // //     {
-// // // //       _id: "1",
-// // // //       employeeName: "John Smith",
-// // // //       interviewDate: "2025-09-25T10:00:00Z",
-// // // //       meetingLink: "https://meet.google.com/abc-defg-hij",
-// // // //       status: "Pending",
-// // // //     },
-// // // //     {
-// // // //       _id: "2",
-// // // //       employeeName: "Alice Johnson",
-// // // //       interviewDate: "2025-09-26T14:30:00Z",
-// // // //       meetingLink: "https://meet.google.com/xyz-uvw-rst",
-// // // //       status: "Pending",
-// // // //     },
-// // // //     {
-// // // //       _id: "3",
-// // // //       employeeName: "Bob Williams",
-// // // //       interviewDate: "2025-09-27T09:00:00Z",
-// // // //       meetingLink: "https://meet.google.com/lmn-opq-rst",
-// // // //       status: "Accepted",
-// // // //     },
-// // // //   ]);
-
-// // // //   const [toast, setToast] = useState(null);
-// // // //   const [search, setSearch] = useState("");
-
-// // // //   // Filter pending interviews
-// // // //   const pendingInterviews = interviews
-// // // //     .filter((i) => i.status === "Pending")
-// // // //     .filter((i) => i.employeeName.toLowerCase().includes(search.toLowerCase()));
-
-// // // //   const handleStatusUpdate = (id, status) => {
-// // // //     const employee = interviews.find((i) => i._id === id);
-// // // //     setToast({
-// // // //       message: `${employee.employeeName} ${status}`,
-// // // //       type: status === "Accepted" ? "success" : "error",
-// // // //     });
-// // // //     setInterviews((prev) => prev.filter((i) => i._id !== id));
-// // // //     setTimeout(() => setToast(null), 3000);
-// // // //   };
-
-// // // //   return (
-// // // //     <div className="min-h-screen bg-gradient-to-tr from-purple-50 via-pink-50 to-yellow-50 p-8">
-// // // //       <h1 className="text-4xl font-extrabold text-center text-purple-800 mb-8 drop-shadow-lg">
-// // // //         Admin Interview Dashboard
-// // // //       </h1>
-
-// // // //       {/* Search bar */}
-// // // //       <div className="flex justify-center mb-8">
-// // // //         <input
-// // // //           type="text"
-// // // //           placeholder="Search employee..."
-// // // //           value={search}
-// // // //           onChange={(e) => setSearch(e.target.value)}
-// // // //           className="w-full max-w-md px-5 py-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 placeholder-gray-400"
-// // // //         />
-// // // //       </div>
-
-// // // //       {pendingInterviews.length === 0 ? (
-// // // //         <p className="text-center text-gray-600 text-xl animate-pulse">
-// // // //           No pending interviews!
-// // // //         </p>
-// // // //       ) : (
-// // // //         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-// // // //           {pendingInterviews.map((i) => (
-// // // //             <div
-// // // //               key={i._id}
-// // // //               className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-6 relative hover:scale-105 transform transition-transform duration-300 cursor-pointer border border-purple-200"
-// // // //             >
-// // // //               {/* Animated Pending Badge */}
-// // // //               <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-white font-bold text-sm bg-purple-500 animate-pulse">
-// // // //                 Pending
-// // // //               </span>
-
-// // // //               <h2 className="text-2xl font-bold text-purple-800 mb-2">{i.employeeName}</h2>
-// // // //               <p className="text-gray-700 mb-1">
-// // // //                 <span className="font-semibold">Date:</span>{" "}
-// // // //                 {new Date(i.interviewDate).toLocaleDateString()}
-// // // //               </p>
-// // // //               <p className="text-gray-700 mb-3">
-// // // //                 <span className="font-semibold">Time:</span>{" "}
-// // // //                 {new Date(i.interviewDate).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-// // // //               </p>
-
-// // // //               <a
-// // // //                 href={i.meetingLink}
-// // // //                 target="_blank"
-// // // //                 rel="noopener noreferrer"
-// // // //                 className="inline-block text-purple-600 underline mb-5"
-// // // //               >
-// // // //                 Join Meeting
-// // // //               </a>
-
-// // // //               {/* Action Buttons */}
-// // // //               <div className="flex gap-4">
-// // // //                 <button
-// // // //                   onClick={() => handleStatusUpdate(i._id, "Accepted")}
-// // // //                   className="flex-1 bg-gradient-to-r from-green-400 to-green-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
-// // // //                 >
-// // // //                   Accept
-// // // //                 </button>
-// // // //                 <button
-// // // //                   onClick={() => handleStatusUpdate(i._id, "Rejected")}
-// // // //                   className="flex-1 bg-gradient-to-r from-red-400 to-red-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
-// // // //                 >
-// // // //                   Reject
-// // // //                 </button>
-// // // //               </div>
-// // // //             </div>
-// // // //           ))}
-// // // //         </div>
-// // // //       )}
-
-// // // //       {/* Toast Notification */}
-// // // //       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-// // // //     </div>
-// // // //   );
-// // // // }
-
-
-// // // import React, { useEffect, useState } from "react";
-// // // import axios from "axios";
-
-// // // export default function AdminDashboard() {
-// // //   const [interviews, setInterviews] = useState([]);
-// // //   const [toast, setToast] = useState(null);
-// // //   const [search, setSearch] = useState("");
-
-// // //   useEffect(() => {
-// // //     fetchInterviews();
-// // //   }, []);
-
-// // //   const fetchInterviews = async () => {
-// // //     try {
-// // //       const res = await axios.post(
-// // //         "/api/admin/getscheduled",
-// // //         {}, // If your backend requires a body, you can add it here
-// // //         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-// // //       );
-
-// // //       // Assuming your backend sends the interviews in res.data
-// // //       setInterviews(res.data);
-// // //     } catch (err) {
-// // //       console.error("Error fetching scheduled interviews:", err);
-// // //     }
-// // //   };
-
-// // //   const handleStatusUpdate = async (id, status) => {
-// // //     try {
-// // //       // Call backend to update status
-// // //       await axios.patch(
-// // //         `/api/admin/interviews/${id}/status`,
-// // //         { status },
-// // //         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-// // //       );
-
-// // //       // Remove from frontend list
-// // //       setInterviews((prev) => prev.filter((i) => i._id !== id));
-
-// // //       // Show toast
-// // //       setToast({ message: `Interview ${status}`, type: status === "Accepted" ? "success" : "error" });
-// // //       setTimeout(() => setToast(null), 3000);
-// // //     } catch (err) {
-// // //       console.error("Error updating status:", err);
-// // //       setToast({ message: "Failed to update status", type: "error" });
-// // //     }
-// // //   };
-
-// // //   const filtered = interviews.filter((i) =>
-// // //     i.candidateName.toLowerCase().includes(search.toLowerCase())
-// // //   );
-
-// // //   return (
-// // //     <div className="min-h-screen bg-gradient-to-tr from-purple-50 via-pink-50 to-yellow-50 p-8">
-// // //       <h1 className="text-4xl font-extrabold text-center text-purple-800 mb-8">Admin Dashboard</h1>
-
-// // //       <div className="flex justify-center mb-8">
-// // //         <input
-// // //           type="text"
-// // //           placeholder="Search employee..."
-// // //           value={search}
-// // //           onChange={(e) => setSearch(e.target.value)}
-// // //           className="w-full max-w-md px-5 py-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 placeholder-gray-400"
-// // //         />
-// // //       </div>
-
-// // //       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-// // //         {filtered.length === 0 ? (
-// // //           <p className="text-center text-gray-600 text-xl col-span-full">No pending interviews!</p>
-// // //         ) : (
-// // //           filtered.map((i) => (
-// // //             <div
-// // //               key={i._id}
-// // //               className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-6 relative hover:scale-105 transform transition-transform duration-300 cursor-pointer border border-purple-200"
-// // //             >
-// // //               <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-white font-bold text-sm bg-purple-500 animate-pulse">
-// // //                 Pending
-// // //               </span>
-
-// // //               <h2 className="text-2xl font-bold text-purple-800 mb-2">{i.candidateName}</h2>
-// // //               <p className="text-gray-700 mb-1">
-// // //                 <span className="font-semibold">Date:</span> {i.interviewDate}
-// // //               </p>
-// // //               <p className="text-gray-700 mb-3">
-// // //                 <span className="font-semibold">Time:</span> {i.interviewTime}
-// // //               </p>
-
-// // //               <a
-// // //                 href={i.meetingLink}
-// // //                 target="_blank"
-// // //                 rel="noopener noreferrer"
-// // //                 className="inline-block text-purple-600 underline mb-5"
-// // //               >
-// // //                 Join Meeting
-// // //               </a>
-
-// // //               <div className="flex gap-4">
-// // //                 <button
-// // //                   onClick={() => handleStatusUpdate(i._id, "Accepted")}
-// // //                   className="flex-1 bg-gradient-to-r from-green-400 to-green-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
-// // //                 >
-// // //                   Accept
-// // //                 </button>
-// // //                 <button
-// // //                   onClick={() => handleStatusUpdate(i._id, "Rejected")}
-// // //                   className="flex-1 bg-gradient-to-r from-red-400 to-red-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
-// // //                 >
-// // //                   Reject
-// // //                 </button>
-// // //               </div>
-// // //             </div>
-// // //           ))
-// // //         )}
-// // //       </div>
-
-// // //       {toast && <div className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-xl ${toast.type === "success" ? "bg-green-500" : "bg-red-500"} text-white animate-fade-in`}>{toast.message}</div>}
-// // //     </div>
-// // //   );
-// // // }
 
 // // import React, { useEffect, useState } from "react";
-// // import axios from "axios";
+// // import { User } from "lucide-react";
 
-// // export default function AdminDashboard() {
+// // const AdminDashboard = () => {
 // //   const [interviews, setInterviews] = useState([]);
+// //   const [selectedInterview, setSelectedInterview] = useState(null);
 // //   const [toast, setToast] = useState(null);
 // //   const [search, setSearch] = useState("");
-// //   const [loading, setLoading] = useState(true);
+// //   const [loading, setLoading] = useState(false);
+
+// //   const adminId = localStorage.getItem("adminId");
+// //   const token = localStorage.getItem("adminToken");
 
 // //   useEffect(() => {
 // //     fetchInterviews();
@@ -627,17 +19,14 @@
 // //   const fetchInterviews = async () => {
 // //     try {
 // //       setLoading(true);
-// //       const res = await axios.post(
-// //         "http://localhost:4000/api/admin/getscheduled",
-// //         {},
-// //         {
-// //           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-// //         }
-// //       );
-// //       console.log("Fetched interviews:", res.data);
-// //       setInterviews(res.data);
+// //       const res = await fetch("http://localhost:4000/api/admin/getscheduled", {
+// //         headers: { Authorization: `Bearer ${token}` },
+// //       });
+// //       const data = await res.json();
+// //       if (!res.ok) throw new Error(data.message || "Failed to fetch interviews");
+// //       setInterviews(data.interviews || []);
 // //     } catch (err) {
-// //       console.error("Error fetching scheduled interviews:", err);
+// //       console.error(err);
 // //       setToast({ message: "Failed to fetch interviews", type: "error" });
 // //       setTimeout(() => setToast(null), 3000);
 // //     } finally {
@@ -645,90 +34,129 @@
 // //     }
 // //   };
 
-// //   const handleStatusUpdate = async (id, status) => {
+// //   const handleStatusUpdate = async (candidateEmail, status) => {
 // //     try {
-// //       await axios.patch(
-// //         `http://localhost:4000/api/admin/interviews/${id}/status`,
-// //         { status },
-// //         {
-// //           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-// //         }
-// //       );
+// //       setLoading(true);
+// //       let url = "";
+// //       if (status === "Accepted") url = "approve-employee";
+// //       else if (status === "Rejected") url = "reject-employee";
 
-// //       setInterviews((prev) => prev.filter((i) => i._id !== id));
+// //       const res = await fetch(`http://localhost:4000/api/admin/${url}`, {
+// //         method: "POST",
+// //         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+// //         body: JSON.stringify({ email: candidateEmail, adminId }),
+// //       });
+// //       const data = await res.json();
+// //       if (!res.ok) throw new Error(data.message || `Failed to ${status.toLowerCase()}`);
+
+// //       setInterviews(interviews.filter((i) => i.interviewer?.email !== candidateEmail));
 // //       setToast({ message: `Interview ${status}`, type: status === "Accepted" ? "success" : "error" });
 // //       setTimeout(() => setToast(null), 3000);
 // //     } catch (err) {
-// //       console.error("Error updating status:", err);
-// //       setToast({ message: "Failed to update status", type: "error" });
+// //       console.error(err);
+// //       setToast({ message: `Failed to ${status.toLowerCase()}`, type: "error" });
 // //       setTimeout(() => setToast(null), 3000);
+// //     } finally {
+// //       setLoading(false);
 // //     }
 // //   };
 
-// //   const filtered = interviews.filter((i) =>
-// //     i.candidateName.toLowerCase().includes(search.toLowerCase())
+// //   const filtered = interviews.filter(
+// //     (i) => i.interviewer?.name.toLowerCase().includes(search.toLowerCase())
 // //   );
 
+// //   const statusColors = {
+// //     Pending: "bg-yellow-400 text-white",
+// //     Accepted: "bg-green-500 text-white",
+// //     Rejected: "bg-red-500 text-white",
+// //   };
+
 // //   return (
-// //     <div className="min-h-screen bg-gradient-to-tr from-purple-50 via-pink-50 to-yellow-50 p-8">
-// //       <h1 className="text-4xl font-extrabold text-center text-purple-800 mb-8">Admin Dashboard</h1>
+// //     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-indigo-50 pb-12">
+// //       {/* Navbar */}
+// //       <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
+// //         <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+// //           <h1 className="text-xl font-semibold text-indigo-700">
+// //             Ishanya Foundation <span className="font-normal">- Admin</span>
+// //           </h1>
+// //           <div className="flex items-center gap-2 text-gray-700">
+// //             <User className="text-indigo-600" />
+// //             <span>Admin</span>
+// //           </div>
+// //         </div>
+// //       </header>
+
+// //       {/* Hero Section */}
+// //       <section className="max-w-6xl mx-auto px-6 md:px-12 pt-28 pb-10 text-center">
+// //         <h2 className="text-3xl font-bold text-indigo-700 mb-3">Scheduled Interviews</h2>
+// //         <p className="text-gray-600 max-w-2xl mx-auto">
+// //           Review your scheduled interviews — accept, reject, or join meetings.
+// //         </p>
+// //       </section>
 
 // //       {/* Search Bar */}
-// //       <div className="flex justify-center mb-8">
+// //       <div className="max-w-6xl mx-auto px-6 md:px-12 mb-6">
 // //         <input
 // //           type="text"
-// //           placeholder="Search employee..."
+// //           placeholder="Search candidate..."
 // //           value={search}
 // //           onChange={(e) => setSearch(e.target.value)}
-// //           className="w-full max-w-md px-5 py-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 placeholder-gray-400"
+// //           className="w-full max-w-md px-5 py-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300 placeholder-gray-400"
 // //         />
 // //       </div>
 
-// //       {/* Loading State */}
-// //       {loading && <p className="text-center text-gray-600 text-xl animate-pulse">Loading interviews...</p>}
-
 // //       {/* Interview Cards */}
-// //       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-// //         {!loading && filtered.length === 0 && (
-// //           <p className="text-center text-gray-600 text-xl col-span-full">No pending interviews!</p>
-// //         )}
+// //       <div className="max-w-6xl mx-auto px-6 md:px-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+// //         {loading && <p className="text-center text-gray-600 text-xl col-span-full animate-pulse">Loading interviews...</p>}
+// //         {!loading && filtered.length === 0 && <p className="text-center text-gray-600 text-xl col-span-full">No pending interviews!</p>}
 
 // //         {filtered.map((i) => (
 // //           <div
-// //             key={i._id}
-// //             className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-6 relative hover:scale-105 transform transition-transform duration-300 cursor-pointer border border-purple-200"
+// //             key={i.interviewer?.email}
+// //             className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition flex flex-col justify-between"
 // //           >
-// //             <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-white font-bold text-sm bg-purple-500 animate-pulse">
-// //               Pending
-// //             </span>
+// //             <div className="flex items-center gap-4 mb-4">
+// //               <div className="w-12 h-12 bg-indigo-100 text-indigo-700 flex items-center justify-center rounded-full text-lg font-semibold">
+// //                 {i.interviewer?.name.charAt(0).toUpperCase()}
+// //               </div>
+// //               <div>
+// //                 <p className="font-semibold text-gray-800">{i.interviewer?.name}</p>
+// //                 <p className="text-gray-500 text-sm">{i.interviewer?.email}</p>
+// //               </div>
+// //             </div>
 
-// //             <h2 className="text-2xl font-bold text-purple-800 mb-2">{i.candidateName}</h2>
-// //             <p className="text-gray-700 mb-1">
-// //               <span className="font-semibold">Date:</span> {i.interviewDate}
-// //             </p>
-// //             <p className="text-gray-700 mb-3">
-// //               <span className="font-semibold">Time:</span> {i.interviewTime}
-// //             </p>
+// //             <div className="flex flex-col gap-2 mt-2">
+// //               <p className="text-gray-700 text-sm">
+// //                 <span className="font-semibold">Date:</span> {i.interviewDate}
+// //               </p>
+// //               <p className="text-gray-700 text-sm">
+// //                 <span className="font-semibold">Time:</span> {i.interviewTime}
+// //               </p>
+// //             </div>
 
 // //             <a
 // //               href={i.meetingLink}
 // //               target="_blank"
 // //               rel="noopener noreferrer"
-// //               className="inline-block text-purple-600 underline mb-5"
+// //               className="mt-4 w-full text-center bg-indigo-600 text-white px-3 py-2 rounded-md hover:bg-indigo-700 transition"
 // //             >
 // //               Join Meeting
 // //             </a>
 
-// //             <div className="flex gap-4">
+// //             <span className={`absolute top-4 right-4 px-3 py-1 rounded-full font-bold text-sm ${statusColors[i.interviewer?.status || "Pending"]}`}>
+// //               {i.interviewer?.status || "Pending"}
+// //             </span>
+
+// //             <div className="flex gap-2 mt-4">
 // //               <button
-// //                 onClick={() => handleStatusUpdate(i._id, "Accepted")}
-// //                 className="flex-1 bg-gradient-to-r from-green-400 to-green-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
+// //                 onClick={() => handleStatusUpdate(i.interviewer?.email, "Accepted")}
+// //                 className="flex-1 bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-md text-sm transition"
 // //               >
 // //                 Accept
 // //               </button>
 // //               <button
-// //                 onClick={() => handleStatusUpdate(i._id, "Rejected")}
-// //                 className="flex-1 bg-gradient-to-r from-red-400 to-red-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
+// //                 onClick={() => handleStatusUpdate(i.interviewer?.email, "Rejected")}
+// //                 className="flex-1 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-md text-sm transition"
 // //               >
 // //                 Reject
 // //               </button>
@@ -737,47 +165,47 @@
 // //         ))}
 // //       </div>
 
-// //       {/* Toast Notification */}
+// //       {/* Toast */}
 // //       {toast && (
 // //         <div
-// //           className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-xl ${
-// //             toast.type === "success" ? "bg-green-500" : "bg-red-500"
-// //           } text-white animate-fade-in`}
+// //           className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-xl ${toast.type === "success" ? "bg-green-500" : "bg-red-500"} text-white animate-fade-in`}
 // //         >
 // //           {toast.message}
 // //         </div>
 // //       )}
 // //     </div>
 // //   );
-// // }
+// // };
 
+// // export default AdminDashboard;
 // import React, { useEffect, useState } from "react";
-// import axios from "axios";
+// import { User } from "lucide-react";
 
-// export default function AdminDashboard() {
+// const AdminDashboard = () => {
 //   const [interviews, setInterviews] = useState([]);
+//   const [selectedInterview, setSelectedInterview] = useState(null);
 //   const [toast, setToast] = useState(null);
 //   const [search, setSearch] = useState("");
-//   const [loading, setLoading] = useState(true);
+//   const [loading, setLoading] = useState(false);
+
+//   const adminId = localStorage.getItem("adminId");
+//   const token = localStorage.getItem("adminToken");
 
 //   useEffect(() => {
 //     fetchInterviews();
 //   }, []);
 
-//   // Fetch scheduled interviews from backend
 //   const fetchInterviews = async () => {
 //     try {
 //       setLoading(true);
-//       const res = await axios.get(
-//         "http://localhost:4000/api/admin/getscheduled",
-//         {},
-//         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-//       );
-
-//       console.log("Fetched interviews:", res.data.interviews);
-//       setInterviews(res.data.interviews);
+//       const res = await fetch("http://localhost:4000/api/admin/getscheduled", {
+//         headers: { Authorization: `Bearer ${token}` },
+//       });
+//       const data = await res.json();
+//       if (!res.ok) throw new Error(data.message || "Failed to fetch interviews");
+//       setInterviews(data.interviews || []);
 //     } catch (err) {
-//       console.error("Error fetching scheduled interviews:", err.response || err);
+//       console.error(err);
 //       setToast({ message: "Failed to fetch interviews", type: "error" });
 //       setTimeout(() => setToast(null), 3000);
 //     } finally {
@@ -785,105 +213,133 @@
 //     }
 //   };
 
-//   // Handle Accept/Reject status update
-//   const handleStatusUpdate = async (candidateId, status) => {
+//   const handleStatusUpdate = async (candidateEmail, status) => {
 //     try {
-//       await axios.patch(
-//         `http://localhost:4000/api/admin/interviews/${candidateId}/status`,
-//         { status },
-//         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-//       );
+//       setLoading(true);
+//       let url = status === "Accepted" ? "approve-employee" : "reject-employee";
 
-//       // Remove interview from list after update
-//       setInterviews((prev) => prev.filter((i) => i.interviewer._id !== candidateId));
-
-//       setToast({
-//         message: `Interview ${status}`,
-//         type: status === "Accepted" ? "success" : "error",
+//       const res = await fetch(`http://localhost:4000/api/admin/${url}`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+//         body: JSON.stringify({ email: candidateEmail, adminId }),
 //       });
+//       const data = await res.json();
+//       if (!res.ok) throw new Error(data.message || `Failed to ${status.toLowerCase()}`);
+
+//       setInterviews(interviews.filter((i) => i.interviewer?.email !== candidateEmail));
+//       setToast({ message: `Interview ${status}`, type: status === "Accepted" ? "success" : "error" });
 //       setTimeout(() => setToast(null), 3000);
 //     } catch (err) {
-//       console.error("Error updating status:", err.response || err);
-//       setToast({ message: "Failed to update status", type: "error" });
+//       console.error(err);
+//       setToast({ message: `Failed to ${status.toLowerCase()}`, type: "error" });
 //       setTimeout(() => setToast(null), 3000);
+//     } finally {
+//       setLoading(false);
 //     }
 //   };
 
-//   // Filter interviews based on search
-//   const filtered = interviews.filter((i) =>
-//     i.interviewer.name.toLowerCase().includes(search.toLowerCase())
+//   const filtered = interviews.filter(
+//     (i) => i.interviewer?.name.toLowerCase().includes(search.toLowerCase())
 //   );
 
+//   const statusColors = {
+//     Pending: "bg-yellow-400 text-white",
+//     Accepted: "bg-green-500 text-white",
+//     Rejected: "bg-red-500 text-white",
+//   };
+
 //   return (
-//     <div className="min-h-screen bg-gradient-to-tr from-purple-50 via-pink-50 to-yellow-50 p-8">
-//       <h1 className="text-4xl font-extrabold text-center text-purple-800 mb-8">
-//         Admin Dashboard
-//       </h1>
+//     <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-indigo-50 pb-12">
+//       {/* Navbar */}
+//       <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
+//         <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+//           <h1 className="text-xl font-semibold text-indigo-700">
+//             Ishanya Foundation <span className="font-normal">- Admin</span>
+//           </h1>
+//           <div className="flex items-center gap-2 text-gray-700">
+//             <User className="text-indigo-600" />
+//             <span>Admin</span>
+//           </div>
+//         </div>
+//       </header>
+
+//       {/* Hero Section */}
+//       <section className="max-w-6xl mx-auto px-6 md:px-12 pt-28 pb-10 text-center">
+//         <h2 className="text-3xl font-bold text-indigo-700 mb-3">Scheduled Interviews</h2>
+//         <p className="text-gray-600 max-w-2xl mx-auto">
+//           Review your scheduled interviews — accept, reject, or join meetings.
+//         </p>
+//       </section>
 
 //       {/* Search Bar */}
-//       <div className="flex justify-center mb-8">
+//       <div className="max-w-6xl mx-auto px-6 md:px-12 mb-6">
 //         <input
 //           type="text"
-//           placeholder="Search employee..."
+//           placeholder="Search candidate..."
 //           value={search}
 //           onChange={(e) => setSearch(e.target.value)}
-//           className="w-full max-w-md px-5 py-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 placeholder-gray-400"
+//           className="w-full max-w-md px-5 py-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300 placeholder-gray-400"
 //         />
 //       </div>
 
-//       {/* Loading State */}
-//       {loading && (
-//         <p className="text-center text-gray-600 text-xl animate-pulse">
-//           Loading interviews...
-//         </p>
-//       )}
-
 //       {/* Interview Cards */}
-//       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-//         {!loading && filtered.length === 0 && (
-//           <p className="text-center text-gray-600 text-xl col-span-full">
-//             No pending interviews!
+//       <div className="max-w-6xl mx-auto px-6 md:px-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+//         {loading && (
+//           <p className="text-center text-gray-600 text-xl col-span-full animate-pulse">
+//             Loading interviews...
 //           </p>
+//         )}
+//         {!loading && filtered.length === 0 && (
+//           <p className="text-center text-gray-600 text-xl col-span-full">No pending interviews!</p>
 //         )}
 
 //         {filtered.map((i) => (
 //           <div
-//             key={i.interviewer._id}
-//             className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-6 relative hover:scale-105 transform transition-transform duration-300 border border-purple-200"
+//             key={i.interviewer?.email}
+//             className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition relative flex flex-col justify-between"
 //           >
-//             <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-white font-bold text-sm bg-purple-500 animate-pulse">
-//               {i.interviewer.status}
+//             {/* Status Badge */}
+//             <span
+//               className={`absolute top-4 right-4 px-3 py-1 rounded-full font-bold text-sm ${
+//                 statusColors[i.interviewer?.status || "Pending"]
+//               }`}
+//             >
+//               {i.interviewer?.status || "Pending"}
 //             </span>
 
-//             <h2 className="text-2xl font-bold text-purple-800 mb-2">
-//               {i.interviewer.name}
-//             </h2>
-//             <p className="text-gray-700 mb-1">
-//               <span className="font-semibold">Date:</span> {i.interviewDate}
-//             </p>
-//             <p className="text-gray-700 mb-3">
-//               <span className="font-semibold">Time:</span> {i.interviewTime}
-//             </p>
+//             {/* Interview Info */}
+//             <div className="flex flex-col gap-1">
+//               <h3 className="text-lg font-semibold text-gray-800">{i.interviewer?.name}</h3>
+//               <p className="text-gray-500 text-sm">{i.interviewer?.email}</p>
+//               <p className="text-gray-700 mt-2 text-sm">
+//                 <span className="font-semibold">Date:</span> {i.interviewDate}
+//               </p>
+//               <p className="text-gray-700 text-sm">
+//                 <span className="font-semibold">Time:</span> {i.interviewTime}
+//               </p>
+//             </div>
 
-//             <a
-//               href={i.meetingLink}
-//               target="_blank"
-//               rel="noopener noreferrer"
-//               className="inline-block text-purple-600 underline mb-5"
-//             >
-//               Join Meeting
-//             </a>
+//             {/* Buttons */}
+//             <div className="flex justify-end mt-4 gap-2">
+//               {/* Fainter, small Join Meeting button */}
+//               <a
+//                 href={i.meetingLink}
+//                 target="_blank"
+//                 rel="noopener noreferrer"
+//                 className="text-sm bg-indigo-200 text-indigo-800 px-3 py-1 rounded-md hover:bg-indigo-300 transition"
+//               >
+//                 Join
+//               </a>
 
-//             <div className="flex gap-4">
 //               <button
-//                 onClick={() => handleStatusUpdate(i.interviewer._id, "Accepted")}
-//                 className="flex-1 bg-gradient-to-r from-green-400 to-green-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
+//                 onClick={() => handleStatusUpdate(i.interviewer?.email, "Accepted")}
+//                 className="bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-md text-sm transition"
 //               >
 //                 Accept
 //               </button>
 //               <button
-//                 onClick={() => handleStatusUpdate(i.interviewer._id, "Rejected")}
-//                 className="flex-1 bg-gradient-to-r from-red-400 to-red-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
+//                 onClick={() => handleStatusUpdate(i.interviewer?.email, "Rejected")}
+//                 className="bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-md text-sm transition"
 //               >
 //                 Reject
 //               </button>
@@ -892,7 +348,7 @@
 //         ))}
 //       </div>
 
-//       {/* Toast Notification */}
+//       {/* Toast */}
 //       {toast && (
 //         <div
 //           className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-xl ${
@@ -904,36 +360,36 @@
 //       )}
 //     </div>
 //   );
-// }
+// };
 
-
-
+// export default AdminDashboard;
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { User } from "lucide-react";
 
-export default function AdminDashboard() {
+const AdminInterview = () => {
   const [interviews, setInterviews] = useState([]);
   const [toast, setToast] = useState(null);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const adminId = localStorage.getItem("adminId");
+  const token = localStorage.getItem("adminToken");
 
   useEffect(() => {
     fetchInterviews();
   }, []);
 
-  // Fetch scheduled interviews from backend
   const fetchInterviews = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        "http://localhost:4000/api/admin/getscheduled",
-        { headers: { Authorization: `Bearer ${localStorage.getItem("adminToken")}` } }
-      );
-
-      console.log("Fetched interviews:", res.data.interviews);
-      setInterviews(res.data.interviews);
+      const res = await fetch("http://localhost:4000/api/admin/getscheduled", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to fetch interviews");
+      setInterviews(data.interviews || []);
     } catch (err) {
-      console.error("Error fetching scheduled interviews:", err.response || err);
+      console.error(err);
       setToast({ message: "Failed to fetch interviews", type: "error" });
       setTimeout(() => setToast(null), 3000);
     } finally {
@@ -941,194 +397,134 @@ export default function AdminDashboard() {
     }
   };
 
-  // Handle Accept/Reject status update
-//   const handleStatusUpdate = async (candidateId, status) => {
-//     try {
-//       await axios.patch(
-//         `http://localhost:4000/api/admin/interviews/${candidateId}/status`,
-//         { status },
-//         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
-//       );
+  const handleStatusUpdate = async (candidateEmail, status) => {
+    try {
+      setLoading(true);
+      const url = status === "Accepted" ? "approve-employee" : "reject-employee";
 
-//       // Remove interview from list after update
-//       setInterviews((prev) => prev.filter((i) => i.interviewer?._id !== candidateId));
+      const res = await fetch(`http://localhost:4000/api/admin/${url}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ email: candidateEmail, adminId }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || `Failed to ${status.toLowerCase()}`);
 
-//       setToast({
-//         message: `Interview ${status}`,
-//         type: status === "Accepted" ? "success" : "error",
-//       });
-//       setTimeout(() => setToast(null), 3000);
-//     } catch (err) {
-//       console.error("Error updating status:", err.response || err);
-//       setToast({ message: "Failed to update status", type: "error" });
-//       setTimeout(() => setToast(null), 3000);
-//     }
-//   };
-
-// const handleStatusUpdate = async (candidateEmail, status) => {
-//   const token = localStorage.getItem("adminToken");
-//   const adminId = localStorage.getItem("adminId"); // store adminId at login
-
-//   if (!token) return;
-
-//   try {
-//     if (status === "Accepted") {
-//       await axios.post(
-//         "http://localhost:4000/api/admin/approve-employee",
-//         { email: candidateEmail, adminId },
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-//     } else {
-//       // For reject, you can create a separate endpoint to update status
-//       await axios.patch(
-//         `http://localhost:4000/api/admin/interviews/${candidateEmail}/status`,
-//         { status },
-//         { headers: { Authorization: `Bearer ${token}` } }
-//       );
-//     }
-
-//     // Remove from frontend list immediately
-//     setInterviews(prev => prev.filter(i => i.candidateEmail !== candidateEmail));
-
-//     setToast({
-//       message: `Interview ${status}`,
-//       type: status === "Accepted" ? "success" : "error",
-//     });
-//     setTimeout(() => setToast(null), 3000);
-
-//   } catch (err) {
-//     console.error("Error updating status:", err.response || err);
-//     setToast({ message: "Failed to update status", type: "error" });
-//     setTimeout(() => setToast(null), 3000);
-//   }
-// };
-
-const handleStatusUpdate = async (candidateEmail, status) => {
-  const token = localStorage.getItem("token"); // get admin token
-  if (!token) return;
-
-  try {
-    if (status === "Accepted") {
-      // Call approve employee endpoint
-      await axios.post(
-        "http://localhost:4000/api/admin/approve-employee",
-        { email: candidateEmail }, // no need for adminId
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-    } else {
-      // For Reject: call status update endpoint
-      await axios.patch(
-        `http://localhost:4000/api/admin/interviews/${candidateEmail}/status`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      setInterviews(interviews.filter((i) => i.interviewer?.email !== candidateEmail));
+      setToast({ message: `Interview ${status}`, type: status === "Accepted" ? "success" : "error" });
+      setTimeout(() => setToast(null), 3000);
+    } catch (err) {
+      console.error(err);
+      setToast({ message: `Failed to ${status.toLowerCase()}`, type: "error" });
+      setTimeout(() => setToast(null), 3000);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // Remove the interview from the list immediately
-    setInterviews(prev => prev.filter(i => i.candidateEmail !== candidateEmail));
-
-    // Show toast
-    setToast({
-      message: `Interview ${status}`,
-      type: status === "Accepted" ? "success" : "error",
-    });
-    setTimeout(() => setToast(null), 3000);
-
-  } catch (err) {
-    console.error("Error updating status:", err.response || err);
-    setToast({ message: "Failed to update status", type: "error" });
-    setTimeout(() => setToast(null), 3000);
-  }
-};
-
-
-
-  // Filter interviews based on search
-  const filtered = interviews.filter(
-    (i) => i.interviewer && i.interviewer.name.toLowerCase().includes(search.toLowerCase())
+  const filtered = interviews.filter((i) =>
+    i.interviewer?.name.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-purple-50 via-pink-50 to-yellow-50 p-8">
-      <h1 className="text-4xl font-extrabold text-center text-purple-800 mb-8">
-        Admin Dashboard
-      </h1>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-indigo-50 pb-12">
+      {/* Navbar */}
+      <header className="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-indigo-700">
+            Ishanya Foundation <span className="font-normal">- Admin</span>
+          </h1>
+          <div className="flex items-center gap-2 text-gray-700">
+            <User className="text-indigo-600" />
+            <span>Admin</span>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section className="max-w-6xl mx-auto px-6 md:px-12 pt-28 pb-10 text-center">
+        <h2 className="text-3xl font-bold text-indigo-700 mb-3">Scheduled Interviews</h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Review your scheduled interviews — accept, reject, or join meetings.
+        </p>
+      </section>
 
       {/* Search Bar */}
-      <div className="flex justify-center mb-8">
+      <div className="max-w-6xl mx-auto px-6 md:px-12 mb-6">
         <input
           type="text"
-          placeholder="Search employee..."
+          placeholder="Search candidate..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-md px-5 py-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 placeholder-gray-400"
+          className="w-full max-w-md px-5 py-3 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-400 transition-all duration-300 placeholder-gray-400"
         />
       </div>
 
-      {/* Loading State */}
-      {loading && (
-        <p className="text-center text-gray-600 text-xl animate-pulse">
-          Loading interviews...
-        </p>
-      )}
-
       {/* Interview Cards */}
-      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {!loading && filtered.length === 0 && (
-          <p className="text-center text-gray-600 text-xl col-span-full">
-            No pending interviews!
+      <div className="max-w-6xl mx-auto px-6 md:px-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {loading && (
+          <p className="text-center text-gray-600 text-xl col-span-full animate-pulse">
+            Loading interviews...
           </p>
+        )}
+        {!loading && filtered.length === 0 && (
+          <p className="text-center text-gray-600 text-xl col-span-full">No interviews found!</p>
         )}
 
         {filtered.map((i) => (
           <div
-            key={i.interviewer?._id}
-            className="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-6 relative hover:scale-105 transform transition-transform duration-300 border border-purple-200"
+            key={i.interviewer?.email}
+            className="bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition flex flex-col justify-between"
           >
-            <span className="absolute top-4 right-4 px-3 py-1 rounded-full text-white font-bold text-sm bg-purple-500 animate-pulse">
-              {i.interviewer?.status}
-            </span>
+            {/* Circle Avatar */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-12 h-12 bg-indigo-100 text-indigo-700 flex items-center justify-center rounded-full text-lg font-semibold">
+                {i.interviewer?.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <p className="font-semibold text-gray-800">{i.interviewer?.name}</p>
+                <p className="text-gray-500 text-sm">{i.interviewer?.email}</p>
+              </div>
+            </div>
 
-            <h2 className="text-2xl font-bold text-purple-800 mb-2">
-              {i.interviewer?.name || "Unknown"}
-            </h2>
-            <p className="text-gray-700 mb-1">
-              <span className="font-semibold">Date:</span> {i.interviewDate}
-            </p>
-            <p className="text-gray-700 mb-3">
-              <span className="font-semibold">Time:</span> {i.interviewTime}
-            </p>
+            {/* Date & Time */}
+            <div className="flex flex-col gap-1 mt-2">
+              <p className="text-gray-700 text-sm">
+                <span className="font-semibold">Date:</span> {i.interviewDate}
+              </p>
+              <p className="text-gray-700 text-sm">
+                <span className="font-semibold">Time:</span> {i.interviewTime}
+              </p>
+            </div>
 
-            <a
-              href={i.meetingLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block text-purple-600 underline mb-5"
-            >
-              Join Meeting
-            </a>
-
-            <div className="flex gap-4">
+            {/* Buttons */}
+            <div className="flex gap-2 mt-4">
+              <a
+                href={i.meetingLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 text-center bg-indigo-100 text-indigo-700 px-3 py-1 rounded-md text-sm hover:bg-indigo-200 transition"
+              >
+                Join
+              </a>
               <button
-                onClick={() => handleStatusUpdate(i.interviewer?._id, "Accepted")}
-                className="flex-1 bg-gradient-to-r from-green-400 to-green-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
+                onClick={() => handleStatusUpdate(i.interviewer?.email, "Accepted")}
+                className="flex-1 bg-green-100 hover:bg-green-200 text-green-700 px-3 py-1 rounded-md text-sm transition"
               >
                 Accept
               </button>
               <button
-                onClick={() => handleStatusUpdate(i.interviewer?._id, "Rejected")}
-                className="flex-1 bg-gradient-to-r from-red-400 to-red-600 text-white py-2 rounded-xl font-semibold hover:scale-105 transition-transform duration-300 shadow-md"
+                onClick={() => handleStatusUpdate(i.interviewer?.email, "Rejected")}
+                className="flex-1 bg-red-100 hover:bg-red-200 text-red-700 px-3 py-1 rounded-md text-sm transition"
               >
                 Reject
               </button>
-        
-
             </div>
           </div>
         ))}
       </div>
 
-      {/* Toast Notification */}
+      {/* Toast */}
       {toast && (
         <div
           className={`fixed top-5 right-5 z-50 px-5 py-3 rounded-xl ${
@@ -1140,4 +536,6 @@ const handleStatusUpdate = async (candidateEmail, status) => {
       )}
     </div>
   );
-}
+};
+
+export default AdminInterview;

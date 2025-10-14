@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const adminAuth = require("../middlewares/adminauth"); // ✅ Protect route with admin auth
 
-const { addAdmin, approveStudent, approveEmployee , getAllStudents,getScheduledInterviews, getApprovedStudents,getRegisteredEmployees , getApprovedEmployees , sendAppointmentEmails, sendInterviewEmail,assignTeacherToStudent,assignCourseToStudent ,createCourse,getCourses,createAnnouncement   } = require("../controllers/adminController"); // ✅ Import all functions
+const { addAdmin, approveStudent, approveEmployee ,getUnassignedStudents,rejectEmployee,deleteStudent, rejectEmployeewithoutemail,getAllStudents,getScheduledInterviews, getApprovedStudents,getRegisteredEmployees , getApprovedEmployees , sendAppointmentEmails, sendInterviewEmail,assignTeacherToStudent,assignCourseToStudent ,createCourse,getCourses,createAnnouncement   } = require("../controllers/adminController"); // ✅ Import all functions
 const adminController = require("../controllers/adminAuthController");
 
 //  Admin login route
@@ -13,7 +13,7 @@ router.post("/approve-student/:udid", adminAuth, approveStudent);
 
 
 //  Route to approve an employee (Protected)
-router.post("/approve-employee", adminAuth, approveEmployee);
+
 
 //  Route to add a new admin (Protected)
 router.post("/add-admin", adminAuth, addAdmin);
@@ -31,4 +31,10 @@ router.post("/create-course", adminAuth,createCourse);
 router.get("/get-courses",adminAuth,getCourses);
 router.post("/create-announcement", adminAuth, createAnnouncement);
 router.get("/getscheduled",adminAuth,getScheduledInterviews);
+router.post("/approve-employee", adminAuth, approveEmployee);
+router.post("/reject-employee",adminAuth,rejectEmployee);
+router.post("/reject-before",adminAuth,rejectEmployeewithoutemail);
+
+router.delete("/delete-student/:udid",adminAuth, deleteStudent);
+router.get("/unassigned",adminAuth,getUnassignedStudents);
 module.exports = router;

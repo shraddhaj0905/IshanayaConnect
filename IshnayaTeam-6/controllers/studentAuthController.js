@@ -138,37 +138,20 @@ exports.getFutureAnnouncements = async (req, res) => {
 
 exports.getStudentReport = async (req, res) => {
   try {
-    const studentId = req.student.id || req.student._id; // use JWT id
+    const studentId = req.student.id || req.student._id; // JWT id
+
 
     const student = await ApprovedStudent.findById(studentId)
       .populate("teacher_id", "name email")
       .populate("courses", "course_name course_code");
 
+
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    // --- Attendance Stats ---
-    const totalDays = student.attendance.length;
-    const presentDays = student.attendance.filter(a => a.status === "Present").length;
-    const absentDays = totalDays - presentDays;
-    const attendancePercentage = totalDays > 0 ? ((presentDays / totalDays) * 100).toFixed(2) : 0;
 
-    // --- Monthly Evaluation ---
-    const months = student.monthly_evaluation.map(e => e.month);
-    const communicationScores = student.monthly_evaluation.map(e => e.communication.score);
-    const cognitionScores = student.monthly_evaluation.map(e => e.cognition.score);
-    const academicsScores = student.monthly_evaluation.map(e => e.academics_OBE_Level_A.score);
-    const functionalScores = student.monthly_evaluation.map(e => e.functional_skills.score);
-
-    const comments = student.monthly_evaluation.map(e => ({
-      month: e.month,
-      communication: e.communication.comments,
-      cognition: e.cognition.comments,
-      academics_OBE_Level_A: e.academics_OBE_Level_A.comments,
-      functional_skills: e.functional_skills.comments
-    }));
-
+    // Return student document as-is, with populated fields
     const report = {
       student_id: student.student_id,
       student_name: student.student_name,
@@ -176,25 +159,24 @@ exports.getStudentReport = async (req, res) => {
       disability_type: student.disability_type,
       disability_description: student.disability_description,
       join_date: student.join_date,
-      teacher: student.teacher_id,
-      courses: student.courses,
-      attendance: { totalDays, presentDays, absentDays, attendancePercentage },
-      monthlyEvaluation: {
-        months,
-        communicationScores,
-        cognitionScores,
-        academicsScores,
-        functionalScores,
-        comments
-      },
-      area_to_improve: student.area_to_improve
+      teacher: student.teacher_id, // populated teacher
+      courses: student.courses,    // populated courses
+      attendance: student.attendance, // full attendance array
+      monthly_evaluation: student.monthly_evaluation, // full monthly evaluation array
     };
 
-    res.status(200).json({ message: "Report generated successfully", report });
+
+    res.status(200).json({
+      message: "Report generated successfully",
+      report,
+    });
+
 
   } catch (error) {
     console.error("Error generating report:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
 

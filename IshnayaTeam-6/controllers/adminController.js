@@ -1,87 +1,222 @@
 const bcrypt = require("bcryptjs");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+
 const StudentRegistration = require("../models/studentregister"); // Pending students database
 const ApprovedStudent = require("../models/approvestudent"); // Approved students database
-const EmployeeRegistration = require("../models/employeeregister"); // Import EmployeeRegistration model
-const ApprovedEmployee = require("../models/approveemployee"); // 
-const Admin = require("../models/admin"); 
-const nodemailer = require("nodemailer");  
+const EmployeeRegistration = require("../models/employeeregister"); // Registered employees
+const ApprovedEmployee = require("../models/approveemployee"); // Approved employees
+const Admin = require("../models/admin");
+const Course = require("../models/course");
+const Announcement = require("../models/announcement");
+
+
 
 exports.approveStudent = async (req, res) => {
-    try {
-        const { udid } = req.params; // ✅ Fetching UDID from URL params
+  try {
+    const { udid } = req.params;
 
-        // Find the student in registration collection using UDID
-        const student = await StudentRegistration.findOne({ udid });
-        if (!student) {
-            return res.status(404).json({ message: "Student not found for the given UDID." });
-        }
+    const student = await StudentRegistration.findOne({ udid });
+    if (!student) return res.status(404).json({ message: "Student not found for the given UDID." });
 
-        // Check if student is already approved
-        const alreadyApproved = await ApprovedStudent.findOne({ udid });
-        if (alreadyApproved) {
-            return res.status(400).json({ message: "Student is already approved." });
-        }
+    const alreadyApproved = await ApprovedStudent.findOne({ udid });
+    if (alreadyApproved) return res.status(400).json({ message: "Student is already approved." });
 
-        // Generate Unique Student ID
-        let student_id;
-        let isUnique = false;
-        while (!isUnique) {
-            student_id = `STU-${Math.floor(100000 + Math.random() * 900000)}`;
-            const existingStudent = await ApprovedStudent.findOne({ student_id });
-            if (!existingStudent) isUnique = true;
-        }
-
-        // Create approved student entry
-        const approvedStudent = new ApprovedStudent({
-            student_id, // ✅ Store Unique ID
-            parent_email: student.parent_email,
-            parent_name: student.parent_name,
-            contact_number: student.contact_number,
-            address: student.address,
-            student_name: student.student_name,
-            dob: student.dob,
-            blood_group: student.blood_group,
-            gender: student.gender,
-            disability_type: student.disability_type,
-            disability_description: student.disability_description,
-            special_requirements: student.special_requirements,
-            previous_interventions: student.previous_interventions,
-            recommended_programs: "",
-            join_date: new Date(),
-            approved_at: new Date(),
-            password: student.password,
-            udid: student.udid // ✅ Save UDID in DB
-        });
-
-        await approvedStudent.save();
-        await StudentRegistration.deleteOne({ udid }); // ✅ Delete from registered students
-
-        res.status(201).json({ message: "Student approved successfully!", approvedStudent });
-
-    } catch (error) {
-        console.error("Internal Server Error:", error);
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
+    let student_id;
+    let isUnique = false;
+    while (!isUnique) {
+      student_id = `STU-${Math.floor(100000 + Math.random() * 900000)}`;
+      const existingStudent = await ApprovedStudent.findOne({ student_id });
+      if (!existingStudent) isUnique = true;
     }
+
+    const approvedStudent = new ApprovedStudent({
+      student_id,
+      parent_email: student.parent_email,
+      parent_name: student.parent_name,
+      contact_number: student.contact_number,
+      address: student.address,
+      student_name: student.student_name,
+      dob: student.dob,
+      blood_group: student.blood_group,
+      gender: student.gender,
+      disability_type: student.disability_type,
+      disability_description: student.disability_description,
+      special_requirements: student.special_requirements,
+      previous_interventions: student.previous_interventions,
+      recommended_programs: "",
+      join_date: new Date(),
+      approved_at: new Date(),
+      password: student.password,
+      udid: student.udid
+    });
+
+    await approvedStudent.save();
+    await StudentRegistration.deleteOne({ udid });
+
+    // ----------------- SEND EMAIL -----------------
+    const transporter = nodemailer.createTransport({
+      service: "gmail", // or your email service
+      auth: {
+        user: process.env.MAIL_USER, // your email
+        pass: process.env.MAIL_PASS, // your email password / app password
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.MAIL_USER,
+      to: student.parent_email,
+      subject: "Admission Visit Scheduled - Ishanya Foundation",
+      html: `
+        <h3>Dear ${student.parent_name},</h3>
+        <p>We are pleased to inform you that your child <strong>${student.student_name}</strong> has been approved to proceed with the admission process.</p>
+        <p>Please visit our center for the admission completion process. You can schedule your visit at a convenient date and time.</p>
+        <p><strong>UDID:</strong> ${student.udid}</p>
+        <p>Thank you,<br/>Ishanya Foundation</p>
+      `,
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error("Error sending email:", err);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+    res.status(201).json({ message: "Student approved successfully and email sent!", approvedStudent });
+  } catch (error) {
+    console.error("Internal Server Error:", error);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
 };
 
 
+exports.deleteStudent = async (req, res) => {
+  try {
+    const { udid } = req.params;
+
+    // Find the student first
+    const student = await StudentRegistration.findOne({ udid });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found for the given UDID." });
+    }
+
+    // Create nodemailer transporter inside the controller
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.MAIL_USER, // your email
+        pass: process.env.MAIL_PASS, // app password or real password
+      },
+    });
+
+    // Send polite rejection email to parent
+    const mailOptions = {
+      from: process.env.MAIL_USER,
+      to: student.parent_email,
+      subject: "Admission Update - Ishanya Foundation",
+      html: `
+        <p>Dear ${student.parent_name},</p>
+        <p>Thank you for your interest in enrolling ${student.student_name} at Ishanya Foundation.</p>
+        <p>After careful consideration, we regret to inform you that we are currently unable to provide the specialized support required for ${student.student_name} at our institution.</p>
+        <p>We truly appreciate your understanding and wish you the very best in finding the appropriate program that can cater to their needs.</p>
+        <p>Sincerely,<br/>Ishanya Foundation Team</p>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    // Delete the student after sending email
+    const deletedStudent = await StudentRegistration.findOneAndDelete({ udid });
+
+    res.status(200).json({
+      message: `Student with UDID: ${udid} has been removed successfully and parent has been notified via email.`,
+      deletedStudent,
+    });
+  } catch (error) {
+    console.error("Error deleting student:", error);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+
+exports.getAllStudents = async (req, res) => {
+  try {
+    const students = await StudentRegistration.find();
+    res.status(200).json(students);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching students", error });
+  }
+};
+
+exports.getApprovedStudents = async (req, res) => {
+  try {
+    const approvedStudents = await ApprovedStudent.find();
+    res.status(200).json(approvedStudents);
+  } catch (error) {
+    console.error("Error fetching approved students:", error);
+    res.status(500).json({ message: "Error fetching approved students", error: error.message });
+  }
+};
+
+exports.sendAppointmentEmails = async (req, res) => {
+  try {
+    const { email, udid, date, time } = req.body;
+    if (!email || !udid || !date || !time) {
+      return res.status(400).json({ message: "Email, UDID, date, and time are required" });
+    }
+
+    const lowerCaseEmail = email.toLowerCase();
+    const student = await StudentRegistration.findOne({ parent_email: lowerCaseEmail });
+    if (!student) return res.status(404).json({ message: "Student not found in the registered database" });
+
+    if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
+      return res.status(500).json({ error: "Email configuration missing" });
+    }
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS
+      }
+    });
+
+    const mailOptions = {
+      from: process.env.MAIL_USER,
+      to: lowerCaseEmail,
+      subject: "Appointment Confirmation",
+      html: `
+        <h2>Appointment Confirmation</h2>
+        <p>Your appointment for Student <b>UDID: ${udid}</b> is confirmed on <b>${date}</b> at <b>${time}</b>.</p>
+        <p>Best Regards,<br><b>Admin Team</b></p>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Appointment email sent successfully" });
+  } catch (error) {
+    console.error("Error in sendAppointmentEmails:", error);
+    res.status(500).json({ error: "Failed to send email" });
+  }
+};
+
+// ------------------------ EMPLOYEES ------------------------
+
 exports.approveEmployee = async (req, res) => {
   try {
-    const { email, adminId } = req.body; // pass adminId from frontend
+    const { email, adminId } = req.body;
 
-    // Find the employee in registration collection
     const employee = await EmployeeRegistration.findOne({ email });
-    if (!employee) {
-      return res.status(404).json({ message: "Employee not found for the given email." });
-    }
+    if (!employee) return res.status(404).json({ message: "Employee not found for the given email." });
 
-    // Check if employee is already approved
     const alreadyApproved = await ApprovedEmployee.findOne({ email });
-    if (alreadyApproved) {
-      return res.status(400).json({ message: "Employee is already approved." });
-    }
+    if (alreadyApproved) return res.status(400).json({ message: "Employee is already approved." });
 
-    // Generate Unique Employee ID
     let emp_reg_id;
     let isUnique = false;
     while (!isUnique) {
@@ -90,7 +225,6 @@ exports.approveEmployee = async (req, res) => {
       if (!existingEmployee) isUnique = true;
     }
 
-    // Create approved employee entry
     const approvedEmployee = new ApprovedEmployee({
       emp_reg_id,
       name: employee.name,
@@ -106,86 +240,123 @@ exports.approveEmployee = async (req, res) => {
       password: employee.password
     });
     await approvedEmployee.save();
-
-    // Delete from registered employees
     await EmployeeRegistration.deleteOne({ email });
 
-    // Remove from admin's interviewsScheduled array
     await Admin.findByIdAndUpdate(adminId, {
       $pull: { interviewsScheduled: { candidateEmail: email } }
     });
 
-    res.status(201).json({ message: "Employee approved successfully!", approvedEmployee });
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS
+      }
+    });
 
+    const mailOptions = {
+      from: `Admin Team <${process.env.MAIL_USER}>`,
+      to: employee.email,
+      subject: "Congratulations! You have been selected 🎉",
+      text: `Dear ${employee.name},\n\nCongratulations! 🎊\n\nYou have successfully cleared the interview and are now an approved employee in our organization.\n\nWe are excited to have you onboard!\n\nBest Regards,\nAdmin Team`
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(201).json({
+      message: "Employee approved successfully and email sent!",
+      approvedEmployee
+    });
   } catch (error) {
     console.error("Internal Server Error:", error);
     res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
 
-exports.addAdmin = async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
+exports.rejectEmployee = async (req, res) => {
+  try {
+    const { email, adminId } = req.body;
+    const employee = await EmployeeRegistration.findOne({ email });
+    if (!employee) return res.status(404).json({ message: "Employee not found for the given email." });
 
-        //  Check if admin already exists
-        const existingAdmin = await Admin.findOne({ email });
-        if (existingAdmin) {
-            return res.status(400).json({ message: "Admin with this email already exists." });
-        }
+    await EmployeeRegistration.deleteOne({ email });
 
-        //  Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
+    await Admin.findByIdAndUpdate(adminId, {
+      $pull: { interviewsScheduled: { candidateEmail: email } }
+    });
 
-        // Create new admin
-        const newAdmin = new Admin({
-            name,
-            email,
-            password: hashedPassword, // Store hashed password
-        });
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS }
+    });
 
-        await newAdmin.save();
-        res.status(201).json({ message: "New admin added successfully!", newAdmin });
+    const mailOptions = {
+      from: `Admin Team <${process.env.MAIL_USER}>`,
+      to: employee.email,
+      subject: "Interview Update",
+      text: `Dear ${employee.name},\n\nThank you for attending the interview.\n\nWe regret to inform you that you have not been selected at this time.\n\nWe wish you the best in your future endeavors.\n\nBest Regards,\nAdmin Team`
+    };
 
-    } catch (error) {
-        console.error(" Error adding admin:", error);
-        res.status(500).json({ error: "Internal Server Error", details: error.message });
-    }
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Employee rejected successfully and email sent!" });
+  } catch (error) {
+    console.error("Internal Server Error:", error);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
 };
 
 
-exports.getAllStudents = async (req, res) => {
-    try {
-      const students = await StudentRegistration.find();
-      res.status(200).json(students);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching students", error });
-    }
-  };
+exports.rejectEmployeewithoutemail = async (req, res) => {
+  try {
+    const { email } = req.body;
 
-  exports.getApprovedStudents = async (req, res) => {
-    try {
-        const approvedStudents = await ApprovedStudent.find();
-        res.status(200).json(approvedStudents);
-    } catch (error) {
-        console.error("Error fetching approved students:", error);
-        res.status(500).json({ message: "Error fetching approved students", error: error.message });
+    // Find employee by email
+    const employee = await EmployeeRegistration.findOne({ email });
+    if (!employee) {
+      return res.status(404).json({ message: "Employee not found for the given email." });
     }
+
+    // Delete only from EmployeeRegistration
+    await EmployeeRegistration.deleteOne({ email });
+
+    // Setup nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS },
+    });
+
+    // Rejection mail
+    const mailOptions = {
+      from: `Admin Team <${process.env.MAIL_USER}>`,
+      to: employee.email,
+      subject: "Interview Update",
+      text: `Dear ${employee.name},\n\nThank you for your application.\n\nWe regret to inform you that you have not been selected at this time.\n\nWe wish you the best in your future endeavors.\n\nBest Regards,\nAdmin Team`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Employee rejected successfully and email sent!" });
+  } catch (error) {
+    console.error("Internal Server Error:", error);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
 };
 
 exports.getRegisteredEmployees = async (req, res) => {
-    try {
-        const registeredEmployees = await EmployeeRegistration.find(); // Fetch all registered employees
-        res.status(200).json(registeredEmployees);
-    } catch (error) {
-        console.error("Error fetching registered employees:", error);
-        res.status(500).json({ message: "Error fetching registered employees", error: error.message });
-    }
+  try {
+    // Fetch only employees with status "Registred"
+    const registeredEmployees = await EmployeeRegistration.find({ status: "Registred" });
+    res.status(200).json(registeredEmployees);
+  } catch (error) {
+    console.error("Error fetching registered employees:", error);
+    res.status(500).json({ message: "Error fetching registered employees", error: error.message });
+  }
 };
-
 
 exports.getApprovedEmployees = async (req, res) => {
   try {
-    const approvedEmployees = await ApprovedEmployee.find(); // Fetch all approved employees
+    const approvedEmployees = await ApprovedEmployee.find();
     res.status(200).json(approvedEmployees);
   } catch (error) {
     console.error("Error fetching approved employees:", error);
@@ -193,126 +364,62 @@ exports.getApprovedEmployees = async (req, res) => {
   }
 };
 
+// ------------------------ ADMIN ------------------------
 
-exports.sendAppointmentEmails = async (req, res) => {
-    try {
-        const { email, udid, date, time } = req.body;
+exports.addAdmin = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
-        if (!email || !udid || !date || !time) {
-            return res.status(400).json({ message: "Email, UDID, date, and time are required" });
-        }
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) return res.status(400).json({ message: "Admin with this email already exists." });
 
-        const lowerCaseEmail = email.toLowerCase();
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Check if the student is registered
-        const student = await StudentRegistration.findOne({ parent_email: lowerCaseEmail });
-        if (!student) {
-            return res.status(404).json({ message: "Student not found in the registered database" });
-        }
+    const newAdmin = new Admin({ name, email, password: hashedPassword });
+    await newAdmin.save();
 
-        // Ensure email credentials are set
-        if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
-            return res.status(500).json({ error: "Email configuration missing" });
-        }
-
-        console.log("MAIL_USER:", process.env.MAIL_USER);
-        console.log("MAIL_PASS:", process.env.MAIL_PASS ? "Loaded" : "Missing");
-
-        // Configure transporter
-        const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
-            secure: false,
-            auth: {
-                user: process.env.MAIL_USER,
-                pass: process.env.MAIL_PASS,
-            },
-        });
-
-        // Define email content
-        const mailOptions = {
-            from: process.env.MAIL_USER,
-            to: lowerCaseEmail,
-            subject: "Appointment Confirmation",
-            html: `
-                <h2>Appointment Confirmation</h2>
-                <p>Your appointment for Student <b>UDID: ${udid}</b> is confirmed on <b>${date}</b> at <b>${time}</b>.</p>
-                <p>Best Regards,<br><b>Admin Team</b></p>
-            `,
-        };
-
-        // Send email
-        await transporter.sendMail(mailOptions);
-
-        res.status(200).json({ message: "Appointment email sent successfully" });
-    } catch (error) {
-        console.error("Error in sendAppointmentEmails:", error);
-        res.status(500).json({ error: "Failed to send email" });
-    }
+    res.status(201).json({ message: "New admin added successfully!", newAdmin });
+  } catch (error) {
+    console.error("Error adding admin:", error);
+    res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
 };
 
-const crypto = require("crypto");
+// ------------------------ INTERVIEWS ------------------------
 
 exports.sendInterviewEmail = async (req, res) => {
   try {
     const { email, name, interview_date, interview_time } = req.body;
-
-    // Validate request body
     if (!email || !name || !interview_date || !interview_time) {
       return res.status(400).json({ message: "Email, name, interview date, and interview time are required" });
     }
 
     const lowerCaseEmail = email.toLowerCase();
-
-    // Check if the employee exists
     const employee = await EmployeeRegistration.findOne({ email: lowerCaseEmail });
-    if (!employee) {
-      return res.status(404).json({ message: "Employee not found in the registered database" });
-    }
+    if (!employee) return res.status(404).json({ message: "Employee not found in the registered database" });
 
-    // Ensure email credentials
-    if (!process.env.MAIL_USER || !process.env.MAIL_PASS) {
-      return res.status(500).json({ error: "Email configuration missing" });
-    }
+    if (!process.env.MAIL_USER || !process.env.MAIL_PASS) return res.status(500).json({ error: "Email configuration missing" });
 
-    // Generate unique Jitsi meeting link
     const uniqueId = crypto.randomBytes(6).toString("hex");
     const meetingLink = `https://meet.jit.si/interview-${name}-${uniqueId}`;
 
-    // Update employee status to "Pending"
     employee.status = "Pending";
     await employee.save();
 
-    // Save interview schedule under logged-in admin
-    const adminId = req.admin.id; // ✅ comes from JWT middleware
+    const adminId = req.admin.id;
     await Admin.findByIdAndUpdate(
       adminId,
-      {
-        $push: {
-          interviewsScheduled: {
-            interviewer: employee._id,
-            candidateName: name,
-            interviewDate: interview_date,
-            interviewTime: interview_time,
-            meetingLink: meetingLink,
-          },
-        },
-      },
+      { $push: { interviewsScheduled: { interviewer: employee._id, candidateName: name, interviewDate: interview_date, interviewTime: interview_time, meetingLink } } },
       { new: true }
     );
 
-    // Set up mailer
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
       secure: false,
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
+      auth: { user: process.env.MAIL_USER, pass: process.env.MAIL_PASS }
     });
 
-    // Define email content
     const mailOptions = {
       from: process.env.MAIL_USER,
       to: lowerCaseEmail,
@@ -323,21 +430,12 @@ exports.sendInterviewEmail = async (req, res) => {
         <p>Your interview is scheduled on <b>${interview_date}</b> at <b>${interview_time}</b>.</p>
         <p>Join using this link: <a href="${meetingLink}" target="_blank">${meetingLink}</a></p>
         <p>Best Regards,<br><b>HR Team</b></p>
-      `,
+      `
     };
 
-    // Respond immediately
-    res.status(200).json({
-      message: "Interview scheduled and email is being sent",
-      meetingLink,
-    });
+    res.status(200).json({ message: "Interview scheduled and email is being sent", meetingLink });
 
-    // Send email asynchronously
-    transporter
-      .sendMail(mailOptions)
-      .then(info => console.log("✅ Email sent:", info.response))
-      .catch(error => console.error("❌ Email error:", error));
-
+    transporter.sendMail(mailOptions).then(info => console.log("✅ Email sent:", info.response)).catch(error => console.error("❌ Email error:", error));
   } catch (error) {
     console.error("❌ Error in sendInterviewEmail:", error);
     res.status(500).json({ error: "Failed to send email" });
@@ -346,17 +444,10 @@ exports.sendInterviewEmail = async (req, res) => {
 
 exports.getScheduledInterviews = async (req, res) => {
   try {
-    const adminId = req.admin.id; // ✅ from middleware
+    const adminId = req.admin.id;
+    const admin = await Admin.findById(adminId).populate("interviewsScheduled.interviewer", "name email status");
+    if (!admin) return res.status(404).json({ message: "Admin not found" });
 
-    // Populate interviewer (employee) details if needed
-    const admin = await Admin.findById(adminId)
-      .populate("interviewsScheduled.interviewer", "name email status");
-
-    if (!admin) {
-      return res.status(404).json({ message: "Admin not found" });
-    }
-
-    // Return the interviews scheduled by this admin
     res.status(200).json({
       message: "Scheduled interviews fetched successfully",
       interviews: admin.interviewsScheduled.map(interview => ({
@@ -364,167 +455,140 @@ exports.getScheduledInterviews = async (req, res) => {
         interviewDate: interview.interviewDate,
         interviewTime: interview.interviewTime,
         meetingLink: interview.meetingLink,
-        interviewer: interview.interviewer // employee details from EmployeeRegistration
+        interviewer: interview.interviewer
       }))
     });
-
   } catch (error) {
     console.error("❌ Error fetching scheduled interviews:", error);
     res.status(500).json({ error: "Failed to fetch scheduled interviews" });
   }
 };
 
+// ------------------------ TEACHER-STUDENT & COURSES ------------------------
+
 exports.assignTeacherToStudent = async (req, res) => {
-    try {
-        const { student_id, emp_reg_id } = req.body;
+  try {
+    const { student_id, emp_reg_id } = req.body;
 
-        // Check if student exists
-        const student = await ApprovedStudent.findOne({ student_id });
-        if (!student) {
-            return res.status(404).json({ message: "Student not found" });
-        }
+    const student = await ApprovedStudent.findOne({ student_id });
+    if (!student) return res.status(404).json({ message: "Student not found" });
 
-        // Check if teacher exists
-        const teacher = await ApprovedEmployee.findOne({ emp_reg_id });
-        if (!teacher) {
-            return res.status(404).json({ message: "Teacher not found" });
-        }
+    const teacher = await ApprovedEmployee.findOne({ emp_reg_id });
+    if (!teacher) return res.status(404).json({ message: "Teacher not found" });
 
-        // Assign the teacher to the student
-        student.teacher_id = teacher._id;
-        await student.save();
+    student.teacher_id = teacher._id;
+    await student.save();
 
-        // Push student into teacher's assigned_students array if not already assigned
-        if (!teacher.assigned_students.includes(student._id)) {
-            teacher.assigned_students.push(student._id);
-            await teacher.save();
-        }
-
-        res.status(200).json({ message: "Teacher assigned successfully", student, teacher });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+    if (!teacher.assigned_students.includes(student._id)) {
+      teacher.assigned_students.push(student._id);
+      await teacher.save();
     }
+
+    res.status(200).json({ message: "Teacher assigned successfully", student, teacher });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
 };
-
-
-exports.assignCourseToStudent = async (req, res) => {
-    try {
-        const { student_id, courseId } = req.body;
-
-        // Check if student exists
-        const student = await ApprovedStudent.findOne({ student_id });
-        if (!student) {
-            return res.status(404).json({ message: "Student not found" });
-        }
-
-        // Check if course exists
-        const course = await Course.findOne({ courseId });
-        if (!course) {
-            return res.status(404).json({ message: "Course not found" });
-        }
-
-        // Assign course to student (avoid duplicates)
-        if (!student.courses.includes(course._id)) {
-            student.courses.push(course._id);
-            await student.save();
-        }
-
-        res.status(200).json({ message: "Course assigned successfully", student, course });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-};
-
-const Course = require("../models/course"); // Correct import
 
 exports.createCourse = async (req, res) => {
-    try {
-        const { courseId, name, ageGroup, skillAreas } = req.body;
+  try {
+    const { courseId, name, ageGroup, skillAreas } = req.body;
 
-        // Check if the course already exists
-        const existingCourse = await Course.findOne({ courseId }); // Use Course, not courseSchema
-        if (existingCourse) {
-            return res.status(400).json({ message: "Course with this ID already exists" });
-        }
+    const existingCourse = await Course.findOne({ courseId });
+    if (existingCourse) return res.status(400).json({ message: "Course with this ID already exists" });
 
-        // Create new course
-        const newCourse = new Course({  // Use Course, not courseSchema
-            courseId,
-            name,
-            ageGroup,
-            skillAreas
-        });
+    const newCourse = new Course({ courseId, name, ageGroup, skillAreas });
+    await newCourse.save();
 
-        // Save course to database
-        await newCourse.save();
+    res.status(201).json({ message: "Course created successfully", course: newCourse });
+  } catch (error) {
+    console.error("Error creating course:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
 
-        res.status(201).json({ message: "Course created successfully", course: newCourse });
-    } catch (error) {
-        console.error("Error creating course:", error); // Log error for debugging
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
+exports.getCourses = async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.status(200).json(courses);
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    res.status(500).json({ message: "Server error while fetching courses" });
+  }
+};
+
+exports.assignCourseToStudent = async (req, res) => {
+  try {
+    const { student_id, courseId } = req.body;
+
+    const student = await ApprovedStudent.findOne({ student_id });
+    if (!student) return res.status(404).json({ message: "Student not found" });
+
+    const course = await Course.findOne({ courseId });
+    if (!course) return res.status(404).json({ message: "Course not found" });
+
+    student.courses = course._id; // just assign, no array operations
+    await student.save();
+
+    res.status(200).json({ message: "Course assigned successfully", student, course });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
 };
 
 
 
-exports.getCourses = async (req, res) => {
-    try {
-      const courses = await Course.find();
-      console.log("Courses fetched:", courses); // Debugging
-      res.status(200).json(courses);
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-      res.status(500).json({ message: "Server error while fetching courses" });
-    }
-  };
-  
 
 
-  const Announcement = require("../models/announcement");
+// Get students without assigned teacher AND without assigned course
+exports.getUnassignedStudents = async (req, res) => {
+  try {
+    const students = await ApprovedStudent.find({
+      $or: [
+        { teacher_id: { $exists: false } },
+        { teacher_id: null }
+      ],
+      $or: [
+        { courses: { $exists: false } },
+        { courses: null }
+      ]
+    });
 
-  exports.createAnnouncement = async (req, res) => {
-      try {
-          const { title, description, date, category } = req.body;
-  
-          // Ensure all required fields are provided
-          if (!title || !description || !date || !category) {
-              return res.status(400).json({ message: "Title, description, date, and category are required" });
-          }
-  
-          // Validate category
-          const allowedCategories = ["Holiday", "Events", "Urgent"];
-          if (!allowedCategories.includes(category)) {
-              return res.status(400).json({ message: "Invalid category. Allowed values: Holiday, Events, Urgent" });
-          }
-  
-          // Check if the provided date is in the future
-          const currentDate = new Date();
-          const announcementDate = new Date(date);
-  
-          if (announcementDate <= currentDate) {
-              return res.status(400).json({ message: "Date must be in the future" });
-          }
-  
-          // Create new announcement
-          const announcement = new Announcement({
-              title,
-              description,
-              date: announcementDate, // Use provided future date
-              category
-          });
-  
-          // Save to database
-          await announcement.save();
-  
-          res.status(201).json({
-              message: "Announcement created successfully",
-              announcement
-          });
-      } catch (error) {
-          console.error("Error creating announcement:", error);
-          res.status(500).json({ message: "Server error" });
-      }
-  };
-  
+    res.status(200).json({
+      success: true,
+      count: students.length,
+      students
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server Error",
+      error: error.message
+    });
+  }
+};
 
 
+// ------------------------ ANNOUNCEMENTS ------------------------
+
+exports.createAnnouncement = async (req, res) => {
+  try {
+    const { title, description, date, category } = req.body;
+    if (!title || !description || !date || !category) return res.status(400).json({ message: "Title, description, date, and category are required" });
+
+    const allowedCategories = ["Holiday", "Events", "Urgent"];
+    if (!allowedCategories.includes(category)) return res.status(400).json({ message: "Invalid category. Allowed values: Holiday, Events, Urgent" });
+
+    const currentDate = new Date();
+    const announcementDate = new Date(date);
+    if (announcementDate <= currentDate) return res.status(400).json({ message: "Date must be in the future" });
+
+    const announcement = new Announcement({ title, description, date: announcementDate, category });
+    await announcement.save();
+
+    res.status(201).json({ message: "Announcement created successfully", announcement });
+  } catch (error) {
+    console.error("Error creating announcement:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

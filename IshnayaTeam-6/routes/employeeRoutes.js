@@ -10,9 +10,9 @@ router.post("/login", employeeLogin);
 // Fetch assigned students for an employee
 router.get("/assigned-students/:empID", EmployeeAuth, getStudentsByEmployeeId);
 router.get("/get-student/:studentId", EmployeeAuth, getStudentById); // ✅ Pluralized route name
-router.post("/update-evaluation/:studentId", EmployeeAuth, updateMonthlyEvaluation);
+router.put("/students/evaluation", updateMonthlyEvaluation);
 
 router.post("/mark-attendance", EmployeeAuth, markAttendance);
 
-router.get("/profile",EmployeeAuth, getTeacherProfile)
+router.get("/profile",EmployeeAuth, getTeacherProfile);
 module.exports = router;

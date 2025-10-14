@@ -4,6 +4,8 @@ const dotenv = require("dotenv");
 const EmployeeRegistration = require("../models/employeeregister");
 const JWT_SECRET = process.env.JWT_SECRET || "babbar";
 const ApprovedEmployee = require("../models/approveemployee");
+const ApprovedStudent = require("../models/approvestudent");
+
 
 dotenv.config();
 
@@ -99,15 +101,13 @@ exports.getStudentsByEmployeeId = async (req, res) => {
 };
 
 
-
-const ApprovedStudent = require("../models/approvestudent");
-
-// ✅ Add or Update Monthly Evaluation for a Particular Student
 exports.updateMonthlyEvaluation = async (req, res) => {
     try {
-        const { studentId } = req.params;
+        // Get studentId from request body
         const { 
+            studentId, // <-- now from body
             month, 
+            year, 
             communication, 
             cognition, 
             academics_OBE_Level_A, 
@@ -115,64 +115,49 @@ exports.updateMonthlyEvaluation = async (req, res) => {
             area_to_improve 
         } = req.body;
 
-        // Find the student
-        let student = await ApprovedStudent.findOne({ student_id: studentId });
+        console.log("Updating evaluation for student:", studentId);
+
+        // Find student by student_id
+        const student = await ApprovedStudent.findOne({ student_id: studentId });
         if (!student) {
             return res.status(404).json({ message: "Student not found" });
         }
 
-        // Check if the month already exists in evaluations
-        let existingEvaluation = student.monthly_evaluation.find((eval) => eval.month === month);
+        // Check if evaluation for same month & year exists
+        const existingEvaluation = student.monthly_evaluation.find(
+            (e) => e.month === month && e.year === year
+        );
 
         if (existingEvaluation) {
-            // Update existing evaluation
-            existingEvaluation.communication.score = communication.score;
-            existingEvaluation.communication.comments = communication.comments;
-            
-            existingEvaluation.cognition.score = cognition.score;
-            existingEvaluation.cognition.comments = cognition.comments;
-            
-            existingEvaluation.academics_OBE_Level_A.score = academics_OBE_Level_A.score;
-            existingEvaluation.academics_OBE_Level_A.comments = academics_OBE_Level_A.comments;
-            
-            existingEvaluation.functional_skills.score = functional_skills.score;
-            existingEvaluation.functional_skills.comments = functional_skills.comments;
+            existingEvaluation.communication = communication;
+            existingEvaluation.cognition = cognition;
+            existingEvaluation.academics_OBE_Level_A = academics_OBE_Level_A;
+            existingEvaluation.functional_skills = functional_skills;
+            if (area_to_improve) existingEvaluation.area_to_improve = area_to_improve;
         } else {
-            // Add new evaluation entry
             student.monthly_evaluation.push({
                 month,
-                communication: {
-                    score: communication.score,
-                    comments: communication.comments
-                },
-                cognition: {
-                    score: cognition.score,
-                    comments: cognition.comments
-                },
-                academics_OBE_Level_A: {
-                    score: academics_OBE_Level_A.score,
-                    comments: academics_OBE_Level_A.comments
-                },
-                functional_skills: {
-                    score: functional_skills.score,
-                    comments: functional_skills.comments
-                }
+                year,
+                communication,
+                cognition,
+                academics_OBE_Level_A,
+                functional_skills,
+                area_to_improve: area_to_improve || []
             });
         }
 
-        // Update area to improve (if provided)
-        if (area_to_improve) {
-            student.area_to_improve = area_to_improve;
-        }
-
-        // Save changes
         await student.save();
 
         res.status(200).json({ message: "Monthly evaluation updated successfully", student });
+
     } catch (error) {
+        console.error("Error updating evaluation:", error);
         res.status(500).json({ message: "Server error", error });
     }
 };
+
+
+
 exports.getStudentById = async (req, res) => {
   try {
     const { studentId } = req.params; // Extract student ID from URL

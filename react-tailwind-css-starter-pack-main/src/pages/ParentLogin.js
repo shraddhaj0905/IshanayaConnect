@@ -1,29 +1,31 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Mail, Lock } from "lucide-react";
+
 
 const ParentLogin = () => {
-  const [parentEmail, setParentEmail] = useState(""); // Updated field name
+  const [parentEmail, setParentEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
+
     try {
       const res = await axios.post("http://localhost:4000/api/students/login", {
-        parent_email: parentEmail, // Update field name
+        parent_email: parentEmail,
         password,
       });
 
-      // Save token in localStorage
-      localStorage.setItem("parentToken", res.data.token);
 
-      // Redirect to parent dashboard
+      localStorage.setItem("parentToken", res.data.token);
       navigate("/parent-dashboard");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
@@ -32,45 +34,125 @@ const ParentLogin = () => {
     }
   };
 
+
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-96">
-        <h2 className="text-2xl font-semibold text-center mb-4">Parent Login</h2>
-        {error && <p className="text-red-500 text-center mb-2">{error}</p>}
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label className="block text-gray-600 text-sm font-medium">Parent Email</label>
-            <input 
-              type="email" 
-              value={parentEmail} 
-              onChange={(e) => setParentEmail(e.target.value)}
-              placeholder="Enter your email" 
-              className="w-full p-2 border rounded-lg focus:outline-blue-500"
-              required
-            />
+    <div className="min-h-screen flex">
+      {/* Left panel */}
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-indigo-600 to-blue-700 text-white flex-col justify-center items-center px-12">
+        <h1 className="text-5xl font-extrabold mb-6">Hello Parents! 👋</h1>
+        <p className="text-lg text-indigo-100 max-w-md text-center">
+          Stay connected with your child’s progress, monitor updates, and access reports seamlessly.
+        </p>
+        <p className="absolute bottom-6 text-sm text-indigo-200">
+          © {new Date().getFullYear()} Ishanya Foundation. All rights reserved.
+        </p>
+      </div>
+
+
+      {/* Right panel */}
+      <div className="flex w-full lg:w-1/2 justify-center items-center bg-gray-50">
+        <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-md mx-6">
+          <h2 className="text-3xl font-bold text-indigo-700 mb-2">Welcome Back!</h2>
+          <p className="text-gray-500 mb-6">
+            Don’t have an account?{" "}
+            <span
+              onClick={() => navigate("/signup")}
+              className="text-indigo-600 font-medium hover:underline cursor-pointer"
+            >
+              Create one
+            </span>
+          </p>
+
+
+          {error && (
+            <p className="bg-red-100 text-red-700 text-center py-2 rounded-lg mb-6 font-medium">
+              {error}
+            </p>
+          )}
+
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            {/* Email */}
+            <div>
+              <label htmlFor="email" className="block text-gray-700 font-medium mb-2">
+                Parent Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-3 text-indigo-400" size={20} />
+                <input
+                  id="email"
+                  type="email"
+                  value={parentEmail}
+                  onChange={(e) => setParentEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="w-full rounded-lg border border-gray-200 pl-10 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  required
+                />
+              </div>
+            </div>
+
+
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="block text-gray-700 font-medium mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-3 text-indigo-400" size={20} />
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="w-full rounded-lg border border-gray-200 pl-10 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                  required
+                />
+              </div>
+            </div>
+
+
+            {/* Login Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-3 rounded-lg text-white font-bold transition flex items-center justify-center gap-2 ${
+                loading
+                  ? "bg-indigo-300 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700 shadow-md hover:shadow-lg"
+              }`}
+            >
+              {loading && (
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              )}
+              {loading ? "Logging in..." : "Login Now"}
+            </button>
+          </form>
+
+
+          {/* Extra options */}
+          <div className="mt-6 flex flex-col items-center text-sm text-gray-600">
+            <button className="hover:underline mb-2">Forgot Password?</button>
+            <button
+              onClick={() => alert("Google Login coming soon!")}
+              className="mt-4 w-full border border-gray-300 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition"
+            >
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                alt="Google"
+                className="w-5 h-5"
+              />
+              Login with Google
+            </button>
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-600 text-sm font-medium">Password</label>
-            <input 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password" 
-              className="w-full p-2 border rounded-lg focus:outline-blue-500"
-              required
-            />
-          </div>
-          <button 
-            type="submit" 
-            className="w-full bg-blue-500 text-white py-2 rounded-lg font-semibold hover:bg-blue-600"
-            disabled={loading}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );
 };
 
+
 export default ParentLogin;
+
+
+
