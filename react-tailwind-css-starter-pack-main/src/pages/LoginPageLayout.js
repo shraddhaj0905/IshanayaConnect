@@ -48,6 +48,8 @@
 
 import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { Mail } from "lucide-react";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 export default function ApplyNow() {
   const navigate = useNavigate(); // Initialize navigation

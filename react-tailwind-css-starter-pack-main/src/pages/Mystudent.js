@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import TeacherNavbar from "../components/EmployeeNavbar";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 export default function MyStudent() {
   const [search, setSearch] = useState("");
@@ -24,7 +26,7 @@ export default function MyStudent() {
       const empID = decodedToken.id;
 
       const response = await fetch(
-        `http://localhost:4000/api/employees/assigned-students/${empID}`,
+        `${BACKEND_URL}/api/employees/assigned-students/${empID}`,
         {
           method: "GET",
           headers: {

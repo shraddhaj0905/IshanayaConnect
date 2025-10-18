@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Eye, X } from "lucide-react";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 
 const EnrolledEmployees = () => {
@@ -18,7 +20,7 @@ const EnrolledEmployees = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:4000/api/admin/get-approve-employee",
+        `${BACKEND_URL}/api/admin/get-approve-employee`,
         {
           method: "GET",
           headers: {

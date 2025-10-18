@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 
 const TeacherProfile = () => {
@@ -23,7 +25,7 @@ const TeacherProfile = () => {
 
 
       try {
-        const response = await fetch("http://localhost:4000/api/employees/profile", {
+        const response = await fetch(`${BACKEND_URL}/api/employees/profile`, {
           method: "GET",
           headers: { Authorization: token, "Content-Type": "application/json" },
         });

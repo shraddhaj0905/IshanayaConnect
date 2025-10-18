@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Mail, Lock } from "lucide-react";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AdminLogin = () => {
   const [adminEmail, setAdminEmail] = useState("");
@@ -19,7 +20,7 @@ const AdminLogin = () => {
 
 
     try {
-      const res = await axios.post("http://localhost:4000/api/admin/login", {
+      const res = await axios.post(`${BACKEND_URL}/api/admin/login`, {
         email: adminEmail,
         password,
       });

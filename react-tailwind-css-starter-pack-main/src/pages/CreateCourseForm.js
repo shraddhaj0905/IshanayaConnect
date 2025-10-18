@@ -175,6 +175,8 @@
 import React, { useState } from "react";
 import CourseImage from "../assests/createcourse.png";
 import { FaBook } from "react-icons/fa";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 const CreateCourse = () => {
   const [formData, setFormData] = useState({
@@ -209,7 +211,7 @@ const CreateCourse = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:4000/api/admin/create-course", {
+      const response = await fetch(`${BACKEND_URL}/api/admin/create-course`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

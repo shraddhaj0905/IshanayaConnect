@@ -126,6 +126,9 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { Search, CloudRain } from "lucide-react"; // added rain icon
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
 
 export default function Announcements() {
   const [announcements, setAnnouncements] = useState([]);
@@ -138,7 +141,7 @@ export default function Announcements() {
     const fetchAnnouncements = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:4000/api/students/announcements"
+          `${BACKEND_URL}/api/students/announcements`
         );
         setAnnouncements(response.data.announcements);
       } catch (error) {

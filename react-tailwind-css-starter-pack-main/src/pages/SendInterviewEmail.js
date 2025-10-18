@@ -1,6 +1,8 @@
 
 import React, { useEffect, useState } from "react";
 import { User } from "lucide-react";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 const RegisteredEmployees = () => {
   const [employees, setEmployees] = useState([]);
@@ -16,7 +18,7 @@ const RegisteredEmployees = () => {
         if (!token) return alert("Unauthorized! Please log in.");
 
         const response = await fetch(
-          "http://localhost:4000/api/admin/get-register-employee",
+          `${BACKEND_URL}/api/admin/get-register-employee`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await response.json();
@@ -38,7 +40,7 @@ const RegisteredEmployees = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch("http://localhost:4000/api/admin/send-interwiew-email", {
+      const response = await fetch(`${BACKEND_URL}/api/admin/send-interwiew-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -66,7 +68,7 @@ const RegisteredEmployees = () => {
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch(
-        "http://localhost:4000/api/admin/reject-before",
+        `${BACKEND_URL}/api/admin/reject-before`,
         {
           method: "POST",
           headers: {

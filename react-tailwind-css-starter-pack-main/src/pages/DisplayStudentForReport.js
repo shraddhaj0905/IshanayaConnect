@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TeacherNavbar from "../components/EmployeeNavbar";
 import { User } from "lucide-react"; // Icon for students
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 
 const AllStudents = () => {
@@ -23,7 +25,7 @@ const AllStudents = () => {
 
 
         const response = await fetch(
-          `http://localhost:4000/api/employees/assigned-students/${empID}`,
+          `${BACKEND_URL}/api/employees/assigned-students/${empID}`,
           {
             method: "GET",
             headers: {

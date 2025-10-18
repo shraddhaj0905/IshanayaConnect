@@ -1,6 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import EmployeeNavbar from "../components/EmployeeNavbar"; // Make sure path is correct
 import { useState } from "react";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 
 const StudentProfile = () => {

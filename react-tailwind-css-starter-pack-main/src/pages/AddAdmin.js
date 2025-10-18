@@ -3,6 +3,8 @@ import { Eye, EyeOff } from "lucide-react";
 import AdminImage from "../assests/AddAdmin.jpg";
 import { FaUserCircle } from "react-icons/fa";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 const AddAdmin = () => {
   const [adminData, setAdminData] = useState({ name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -20,14 +22,14 @@ const AddAdmin = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:4000/api/admin/add-admin", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ✅ fixed
-        },
-        body: JSON.stringify(adminData),
-      });
+      const response = await fetch(`${BACKEND_URL}/api/admin/add-admin`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(adminData),
+    });
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Failed to add admin");

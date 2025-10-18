@@ -140,7 +140,7 @@ function MainApp() {
         <Route path="/studentsforreport"  element={<Displaystudent/>}/>
         <Route path="/edit-report/:id" element={<EditReport />} />
         <Route path="/attendanceMakingpage" element={<AttendanceMakingpage />} />
-           <Route path="/teacher/chat/:studentId" element={<TeacherChat />} />
+           {/* <Route path="/teacher/chat/:studentId" element={<TeacherChat />} /> */}
           </>
         ) : (
           <Route path="*" element={<Navigate to="/employeeLogin" />} />
@@ -152,7 +152,7 @@ function MainApp() {
           <>
             <Route path="/announancementpage" element={<Announcements />} />
             <Route path="/studentreportforparent" element={<StudentReportForParent />} />
-             <Route path="/student/chat" element={<StudentChat />} />
+             {/* <Route path="/student/chat" element={<StudentChat />} /> */}
 
           </>
         ) : (

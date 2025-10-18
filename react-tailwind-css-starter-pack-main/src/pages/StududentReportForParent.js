@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { format, parseISO } from "date-fns";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 
 const AttendanceHeatmap = ({ attendance }) => {
@@ -126,7 +128,7 @@ const StudentReportPage = () => {
 
 
       try {
-        const res = await axios.get("http://localhost:4000/api/students/report", {
+        const res = await axios.get(`${BACKEND_URL}/api/students/report`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setReport(res.data.report);

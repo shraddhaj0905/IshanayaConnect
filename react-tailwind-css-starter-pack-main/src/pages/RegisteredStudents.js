@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 const RegisteredStudents = () => {
   const [students, setStudents] = useState([]);
@@ -14,7 +16,7 @@ const RegisteredStudents = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:4000/api/admin/get-register-student", {
+      const response = await fetch(`${BACKEND_URL}/api/admin/get-register-student`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +50,7 @@ const RegisteredStudents = () => {
   const handleApproveStudent = async (udid) => {
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch(`http://localhost:4000/api/admin/approve-student/${udid}`, {
+      const response = await fetch(`${BACKEND_URL}/api/admin/approve-student/${udid}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

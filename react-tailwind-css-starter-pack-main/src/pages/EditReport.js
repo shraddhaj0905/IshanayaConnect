@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { Calendar, Star, Edit3 } from "lucide-react";
 import EmployeeNavbar from "../components/EmployeeNavbar"; // Import your Navbar
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 
 const EditReport = () => {
@@ -51,7 +53,7 @@ const EditReport = () => {
 
 
     try {
-      const response = await fetch("http://localhost:4000/api/employees/students/evaluation", {
+      const response = await fetch(`${BACKEND_URL}/api/employees/students/evaluation`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

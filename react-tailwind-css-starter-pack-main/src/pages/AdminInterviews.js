@@ -365,6 +365,7 @@
 // export default AdminDashboard;
 import React, { useEffect, useState } from "react";
 import { User } from "lucide-react";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const AdminInterview = () => {
   const [interviews, setInterviews] = useState([]);
@@ -382,7 +383,7 @@ const AdminInterview = () => {
   const fetchInterviews = async () => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:4000/api/admin/getscheduled", {
+      const res = await fetch(`${BACKEND_URL}/api/admin/getscheduled`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -402,7 +403,7 @@ const AdminInterview = () => {
       setLoading(true);
       const url = status === "Accepted" ? "approve-employee" : "reject-employee";
 
-      const res = await fetch(`http://localhost:4000/api/admin/${url}`, {
+      const res = await fetch(`${BACKEND_URL}/api/admin/${url}`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ email: candidateEmail, adminId }),

@@ -1,5 +1,8 @@
 import React from "react";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
 // Card Component
 export function Card({ children, className = "" }) {
   return <div className={`bg-white shadow-lg rounded-2xl p-4 ${className}`}>{children}</div>;

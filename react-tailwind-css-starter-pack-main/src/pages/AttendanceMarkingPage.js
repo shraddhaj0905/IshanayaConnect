@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import EmployeeNavbar from "../components/EmployeeNavbar";
 import { Card, Button, Table, TableHeader, TableBody, TableRow, TableHead, TableCell, Input } from "./UIcomponents";
 import { useNavigate } from "react-router-dom";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 export default function AttendancePage() {
@@ -28,7 +29,7 @@ export default function AttendancePage() {
         const empID = decodedToken.id;
 
 
-        const response = await fetch(`http://localhost:4000/api/employees/assigned-students/${empID}`, {
+        const response = await fetch(`${BACKEND_URL}/api/employees/assigned-students/${empID}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -107,7 +108,7 @@ export default function AttendancePage() {
 
 
     try {
-      const response = await fetch("http://localhost:4000/api/employees/mark-attendance", {
+      const response = await fetch(`${BACKEND_URL}/api/employees/mark-attendance`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

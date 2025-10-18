@@ -1,6 +1,8 @@
 
 import React, { useEffect, useState } from "react";
 import { User } from "lucide-react";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 const SendAppointmentEmail = () => {
   const [students, setStudents] = useState([]);
@@ -16,7 +18,7 @@ const SendAppointmentEmail = () => {
         const token = localStorage.getItem("adminToken");
         if (!token) return alert("Unauthorized! Please log in.");
 
-        const response = await fetch("http://localhost:4000/api/admin/get-register-student", {
+        const response = await fetch(`${BACKEND_URL}/api/admin/get-register-student`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await response.json();
@@ -41,7 +43,7 @@ const SendAppointmentEmail = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("adminToken");
-      const response = await fetch("http://localhost:4000/api/admin/send-appointment-email", {
+      const response = await fetch(`${BACKEND_URL}/api/admin/send-appointment-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -69,7 +71,7 @@ const SendAppointmentEmail = () => {
   try {
     const token = localStorage.getItem("adminToken");
 
-    const response = await fetch(`http://localhost:4000/api/admin/delete-student/${student.udid}`, {
+    const response = await fetch(`${BACKEND_URL}/api/admin/delete-student/${student.udid}`, {
       method: "DELETE",
       headers: { 
         "Content-Type": "application/json", 
@@ -93,7 +95,7 @@ const SendAppointmentEmail = () => {
     try {
       const token = localStorage.getItem("adminToken");
       const response = await fetch(
-        `http://localhost:4000/api/admin/approve-student/${student.udid}`,
+        `${BACKEND_URL}/api/admin/approve-student/${student.udid}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },

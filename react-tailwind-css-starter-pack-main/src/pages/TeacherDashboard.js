@@ -7,6 +7,7 @@ import HeroImage from "../assests/teaching.jpg";
 import attendanceImg from "../assests/Attendence.jpg";
 import assessmentImg from "../assests/Assesment.webp";
 import Footer from "../components/Footer";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 
 

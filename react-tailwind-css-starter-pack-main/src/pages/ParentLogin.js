@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Mail, Lock } from "lucide-react";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 const ParentLogin = () => {
   const [parentEmail, setParentEmail] = useState("");
@@ -19,7 +21,7 @@ const ParentLogin = () => {
 
 
     try {
-      const res = await axios.post("http://localhost:4000/api/students/login", {
+      const res = await axios.post(`${BACKEND_URL}/api/students/login`, {
         parent_email: parentEmail,
         password,
       });

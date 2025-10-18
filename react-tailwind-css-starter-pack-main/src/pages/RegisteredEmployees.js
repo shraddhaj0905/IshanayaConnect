@@ -112,6 +112,8 @@
 
 
 import React, { useState, useEffect } from "react";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 const RegisteredEmployees = () => {
   const [employees, setEmployees] = useState([]);
@@ -127,7 +129,7 @@ const RegisteredEmployees = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:4000/api/admin/get-register-employee", {
+      const response = await fetch(`${BACKEND_URL}/api/admin/get-register-employee`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

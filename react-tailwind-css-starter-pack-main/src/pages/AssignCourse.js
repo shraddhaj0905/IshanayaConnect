@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { User } from "lucide-react";
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
+
 const AssignCourse = () => {
   const [students, setStudents] = useState([]);
   const [teachers, setTeachers] = useState([]);
@@ -22,7 +25,7 @@ const AssignCourse = () => {
     if (!token) return;
 
     const response = await fetch(
-      "http://localhost:4000/api/admin/unassigned",
+      `${BACKEND_URL}/api/admin/unassigned`,
       { headers: { Authorization: `Bearer ${token}` } }
     );
     const data = await response.json();
@@ -42,7 +45,7 @@ const AssignCourse = () => {
       if (!token) return;
 
       const response = await fetch(
-        "http://localhost:4000/api/admin/get-approve-employee",
+        `${BACKEND_URL}/api/admin/get-approve-employee`,
         { headers: { Authorization: `Bearer ${token}` } } // fixed template literal
       );
       const data = await response.json();
@@ -59,7 +62,7 @@ const AssignCourse = () => {
       if (!token) return;
 
       const response = await fetch(
-        "http://localhost:4000/api/admin/get-courses",
+        `${BACKEND_URL}/api/admin/get-courses`,
         { headers: { Authorization: `Bearer ${token}` } } // fixed template literal
       );
       const data = await response.json();
@@ -80,7 +83,7 @@ const AssignCourse = () => {
       const token = localStorage.getItem("adminToken");
 
       const teacherResponse = await fetch(
-        "http://localhost:4000/api/admin/assign-teacher",
+        `${BACKEND_URL}/api/admin/assign-teacher`,
         {
           method: "PUT",
           headers: {
@@ -96,7 +99,7 @@ const AssignCourse = () => {
       if (!teacherResponse.ok) throw new Error("Failed to assign teacher");
 
       const courseResponse = await fetch(
-        "http://localhost:4000/api/admin/assign-course",
+        `${BACKEND_URL}/api/admin/assign-course`,
         {
           method: "PUT",
           headers: {

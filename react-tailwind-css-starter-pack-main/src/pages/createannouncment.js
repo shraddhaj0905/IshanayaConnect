@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FaBullhorn } from "react-icons/fa";
 import AnnouncementImage from "../assests/anna.jpg";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+
 
 const CreateAnnouncement = () => {
   const [announcement, setAnnouncement] = useState({
@@ -46,7 +48,7 @@ const CreateAnnouncement = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        "http://localhost:4000/api/admin/create-announcement",
+        `${BACKEND_URL}/api/admin/create-announcement`,
         {
           method: "POST",
           headers: {
