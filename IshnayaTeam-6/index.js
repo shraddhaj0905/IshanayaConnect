@@ -16,9 +16,20 @@ require("dotenv").config();
 const PORT = process.env.PORT || 4000;
 
 // Middleware
+const allowedOrigins = [
+  "https://ishanayaconnect-gwde.vercel.app", // your Vercel frontend
+  "https://ishanayaconnect-2.onrender.com",  // existing allowed origin
+  "http://localhost:3000"                    // local testing
+];
+
 app.use(cors({
-  // origin: "http://localhost:3000",
-  origin:"https://ishanayaconnect-2.onrender.com",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
